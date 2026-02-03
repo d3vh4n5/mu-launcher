@@ -1,0 +1,146 @@
+{
+  "version": "1.0.0",
+  "file_count": 28,
+  "files": [
+    {
+      "path": "launcher/Analysis-00.toc",
+      "size": 187486,
+      "sha256": "969ef1e31392f9b97be471248c104fe13c789669b3c324e031383b141e1f0fc9"
+    },
+    {
+      "path": "launcher/base_library.zip",
+      "size": 1389034,
+      "sha256": "d01c8e9678fa0fe65cac890485dbc0b83975dcb70f1aac2cc4d659f163767964"
+    },
+    {
+      "path": "launcher/EXE-00.toc",
+      "size": 151193,
+      "sha256": "794735a11df43a4ae1f648f615580d8e86a93a21a4f686538dd446101b1b0c1b"
+    },
+    {
+      "path": "launcher/launcher.pkg",
+      "size": 11133337,
+      "sha256": "8b5f74e44753c3ecb52ac6da108964c85e185288bf96d89d69227d093ce8c4a5"
+    },
+    {
+      "path": "launcher/PKG-00.toc",
+      "size": 149491,
+      "sha256": "e8a9fd40b82b7bb90c9225fe394dd6961bc77ddf236e19ccf485389f2f1ef754"
+    },
+    {
+      "path": "launcher/PYZ-00.pyz",
+      "size": 1809835,
+      "sha256": "f31eb2c8d649ff25883ee0df2ba3cc91a44e7f88c80a905c8ab46cb9e38e2fd4"
+    },
+    {
+      "path": "launcher/PYZ-00.toc",
+      "size": 17701,
+      "sha256": "e4b6e92dccd2caec0b233a7aa1ce937a8726e0bc76699bc6468de945a96985b3"
+    },
+    {
+      "path": "launcher/warn-launcher.txt",
+      "size": 2059,
+      "sha256": "a240f93b1c757efa9b5be4c47e936da6e406ec51ed3898baed4a16068b6461bc"
+    },
+    {
+      "path": "launcher/xref-launcher.html",
+      "size": 286029,
+      "sha256": "c0c086954b19ed306b1d214a911cd500fe311f425869b71e4b9372e48a2aaf8f"
+    },
+    {
+      "path": "launcher/localpycs/pyimod01_archive.pyc",
+      "size": 5054,
+      "sha256": "0c44c665d1bc6e077a4793dcf9bedec5ddac57abcb754411167b875fb39fccf8"
+    },
+    {
+      "path": "launcher/localpycs/pyimod02_importers.pyc",
+      "size": 32335,
+      "sha256": "27bae24580f1805e52f68a7c6bd0d1c9cebd80d1efc66ce366f3234e1a61a0cd"
+    },
+    {
+      "path": "launcher/localpycs/pyimod03_ctypes.pyc",
+      "size": 6635,
+      "sha256": "66bed04c82d1254bc24c5d1bf5c1f234ad675254191bf5650e6d413d029a42de"
+    },
+    {
+      "path": "launcher/localpycs/pyimod04_pywin32.pyc",
+      "size": 1705,
+      "sha256": "93206026c67599403e465f7b641a099c8c23274e4a2e54e98188f6379440f57a"
+    },
+    {
+      "path": "launcher/localpycs/struct.pyc",
+      "size": 307,
+      "sha256": "075a093b134138f03a690b4269dc591f8d4ffc4bb308f88fde2d400e5a7142ba"
+    },
+    {
+      "path": "main/Analysis-00.toc",
+      "size": 187470,
+      "sha256": "db9d65d967ae2dd278c4bf0a86229ed87d77e5c6909b4a3246531d7465dadb6f"
+    },
+    {
+      "path": "main/base_library.zip",
+      "size": 1389034,
+      "sha256": "4036727d4e10b6f9ec271b5a21774671dc6764620c17be48eb662d1731cde824"
+    },
+    {
+      "path": "main/EXE-00.toc",
+      "size": 151145,
+      "sha256": "1da8dd3b752afc281fb1a67bc2f8fa614b1b1f81299a346295faa714c143e829"
+    },
+    {
+      "path": "main/main.pkg",
+      "size": 11133729,
+      "sha256": "c1e51a15f3cd4fae8916ff39875a2f21ae4cf75fc806f2286397411498e15b89"
+    },
+    {
+      "path": "main/PKG-00.toc",
+      "size": 149447,
+      "sha256": "c7cf7b9f9bd0cc54f5b9867cc957c5244144cd65367e840d75e41f69a7efb137"
+    },
+    {
+      "path": "main/PYZ-00.pyz",
+      "size": 1809835,
+      "sha256": "f31eb2c8d649ff25883ee0df2ba3cc91a44e7f88c80a905c8ab46cb9e38e2fd4"
+    },
+    {
+      "path": "main/PYZ-00.toc",
+      "size": 17697,
+      "sha256": "1acaea84a537b12a7aa2b6e965a93b9716494b6b9703d161dc3f3066c0c04d6c"
+    },
+    {
+      "path": "main/warn-main.txt",
+      "size": 2059,
+      "sha256": "c389223de831fed05ad8934da88bebdbd6db39b05b2fd4a87a8c19ab05e95bb7"
+    },
+    {
+      "path": "main/xref-main.html",
+      "size": 284697,
+      "sha256": "23a756ff83e8602d48d5331f56c0ecce2b4c155af75f423d9102ef5e62a5933c"
+    },
+    {
+      "path": "main/localpycs/pyimod01_archive.pyc",
+      "size": 5054,
+      "sha256": "0c44c665d1bc6e077a4793dcf9bedec5ddac57abcb754411167b875fb39fccf8"
+    },
+    {
+      "path": "main/localpycs/pyimod02_importers.pyc",
+      "size": 32335,
+      "sha256": "27bae24580f1805e52f68a7c6bd0d1c9cebd80d1efc66ce366f3234e1a61a0cd"
+    },
+    {
+      "path": "main/localpycs/pyimod03_ctypes.pyc",
+      "size": 6635,
+      "sha256": "66bed04c82d1254bc24c5d1bf5c1f234ad675254191bf5650e6d413d029a42de"
+    },
+    {
+      "path": "main/localpycs/pyimod04_pywin32.pyc",
+      "size": 1705,
+      "sha256": "93206026c67599403e465f7b641a099c8c23274e4a2e54e98188f6379440f57a"
+    },
+    {
+      "path": "main/localpycs/struct.pyc",
+      "size": 307,
+      "sha256": "075a093b134138f03a690b4269dc591f8d4ffc4bb308f88fde2d400e5a7142ba"
+    }
+  ]
+}

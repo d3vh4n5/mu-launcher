@@ -1,0 +1,13 @@
+Ve a la misma ruta de antes: HKEY_CURRENT_USER\Software\Webzen\Mu\Config
+
+Busca el valor llamado LangSelection.
+
+Si no existe, créalo: Clic derecho -> Nuevo -> Valor de cadena (String Value). Ponle de nombre LangSelection.
+
+Haz doble clic y cambia el valor por una de estas abreviaciones (respetando mayúsculas):
+
+Eng = Inglés (El que estás usando ahora).
+
+Spn = Español.
+
+Por = Portugués.
