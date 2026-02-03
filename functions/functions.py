@@ -10,6 +10,17 @@ from const.config import *
 # FUNCIONES
 # =========================
 
+def get_registry_value(clave):
+    route = r"Software\Webzen\MU\config"
+    try:
+        reg = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        key = winreg.OpenKey(reg, route)
+        valor, tipo = winreg.QueryValueEx(key, clave)
+        winreg.CloseKey(key)
+        return valor
+    except (FileNotFoundError, OSError):
+        return False
+
 def set_window_mode(windowed: bool):
     try:
         key = winreg.CreateKey(

@@ -17,7 +17,7 @@ class ButtonWithHover():
             )
         self.btn.pack()
         self.btn.bind("<Enter>", self.on_hover)
-        self.btn.bind("<Leave>", self.on_leave_accent)
+        self.btn.bind("<Leave>", self.on_leave)
 
     def on_hover(self, event):
         event.widget.configure(bg=primary_color_light, font=("Arial", font_size, "bold"))

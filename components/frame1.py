@@ -1,7 +1,7 @@
 from tkinter import ttk, Checkbutton, BooleanVar, StringVar, Label, Button
 from const.config import PROJECT_NAME, RESOLUTION_MAP, SERVER_FILES
 from components.button import ButtonWithHover
-from functions.functions import launch_game
+from functions.functions import launch_game, get_registry_value
 
 def load_frame1(frame1):
     frame1.pack_propagate(False)
@@ -42,7 +42,15 @@ def load_frame1(frame1):
         bg="black",
         fg="white",
     ).pack()
+
     resolution_var = StringVar(value="800 x 600")
+    val_registro = get_registry_value("Resolution")
+    
+    if val_registro is not False:
+        mapa_invertido = {v: k for k, v in RESOLUTION_MAP.items()}
+        if val_registro in mapa_invertido:
+            resolution_var.set(mapa_invertido[val_registro])
+
     resolution_combo = ttk.Combobox(
         frame1,
         textvariable=resolution_var,
@@ -55,6 +63,13 @@ def load_frame1(frame1):
 
     # Modo ventana
     window_var = BooleanVar(value=True)
+    window_val = get_registry_value("WindowMode")
+
+    if window_val is not False:
+        window_var.set(True if window_val == 1 else False)
+    else:
+        window_var.set(True)
+
     check = Checkbutton(
         frame1,
         text="Modo ventana",

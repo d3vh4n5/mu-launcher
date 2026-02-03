@@ -7,7 +7,7 @@ from assets.icono_data import ICONO_BASE64
 from assets.imagenes_launcher_data import HERO
 from utils.image_converter import get_image_from_base64
 import pywinstyles
-
+from utils.styles import style
 class App():
     def __init__(self):
         width=320
@@ -26,7 +26,7 @@ class App():
             tmp.write(img_icon_data)
         root.iconbitmap("temp_icon.ico")
         os.remove("temp_icon.ico")
-
+        style(root)
         # --- Cargar y usar un logo (ejemplo) ---
         # Puedes ajustar el tamaño o no pasarlo si quieres el tamaño original
         logo_mu_image_tk = get_image_from_base64(HERO, size=(width, 150))
