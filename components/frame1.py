@@ -1,5 +1,6 @@
-from tkinter import ttk, Checkbutton, BooleanVar, StringVar, Label, Button
-from const.config import PROJECT_NAME, RESOLUTION_MAP, SERVER_FILES
+from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, StringVar, Label, IntVar, Radiobutton
+from const.colors import *
+from const.config import PROJECT_NAME, RESOLUTION_MAP, SERVER_FILES, app_width
 from components.button import ButtonWithHover
 from functions.functions import launch_game, get_registry_value
 
@@ -85,9 +86,118 @@ def load_frame1(frame1):
     check.pack(pady=10)
     check.variable = window_var
 
-    server = server_var.get()
-    windowed = window_var.get()
-    resolution = resolution_var.get()
+    frame_audio = Frame(frame1, width=app_width, height=200, bg=bg_color)
+    frame_audio.pack(pady=20)
+    frame_audio.pack_propagate(False)
+
+    ### Audio On/Off
+    audio_var = BooleanVar(value=True)
+    audio_val = get_registry_value("SoundOnOff")
+
+    if audio_val is not False:
+        audio_var.set(True if audio_val == 1 else False)
+    else:
+        audio_var.set(True)
+
+    audio_check = Checkbutton(
+        frame_audio,
+        text="Audio",
+        variable=audio_var,
+        bg="black",           # Fondo normal
+        fg="white",           # Color del texto
+        selectcolor="black",  # <--- IMPORTANTE: Fondo de la cajita del tick
+        activebackground="black", # Fondo cuando haces clic
+        activeforeground="white", # Texto cuando haces clic
+        highlightthickness=0,     # Quita el borde gris de enfoque
+        bd=0                      # Quita bordes extra
+    )
+    audio_check.grid(row=0, column=0, sticky='e', padx=10, pady=10)
+    audio_check.variable = audio_var
+
+     ### Music On/Off
+    music_var = BooleanVar(value=True)
+    music_val = get_registry_value("MusicOnOff")
+
+    if music_val is not False:
+        music_var.set(True if music_val == 1 else False)
+    else:
+        music_var.set(True)
+
+    music_check = Checkbutton(
+        frame_audio,
+        text="Music",
+        variable=music_var,
+        bg="black",           # Fondo normal
+        fg="white",           # Color del texto
+        selectcolor="black",  # <--- IMPORTANTE: Fondo de la cajita del tick
+        activebackground="black", # Fondo cuando haces clic
+        activeforeground="white", # Texto cuando haces clic
+        highlightthickness=0,     # Quita el borde gris de enfoque
+        bd=0                      # Quita bordes extra
+    )
+    music_check.grid(row=0, column=1, sticky='e', padx=10, pady=10)
+    music_check.variable = music_var
+
+    # Variable para el volumen (0 a 10)
+    volume_var = IntVar(value=get_registry_value("VolumeLevel") or 5)
+
+    # Fila 1: Etiqueta de volumen
+    Label(frame_audio, text="Volumen", bg="black", fg="white", font=("Arial", 8)).grid(row=1, column=0, columnspan=2)
+
+    # Fila 2: La barra
+    volume_scale = Scale(
+        frame_audio, from_=0, to=10, orient=HORIZONTAL, 
+        variable=volume_var, bg="black", fg="white", 
+        troughcolor="#1a1a1a", highlightthickness=0, bd=0, length=200
+    )
+    volume_scale.grid(row=2, column=0, columnspan=2)
+
+    # Frame para Idiomas (dentro de frame1)
+    frame_idioma = Frame(frame1, bg="black")
+    frame_idioma.pack(pady=10, fill='x')
+    
+    # Configuramos las 3 columnas para que tengan el mismo ancho
+    frame_idioma.grid_columnconfigure(0, weight=1)
+    frame_idioma.grid_columnconfigure(1, weight=1)
+    frame_idioma.grid_columnconfigure(2, weight=1)
+
+    # Variable para el idioma (0=Español, 1=Inglés, 2=Portugués)
+    # Puedes leer este valor del registro también
+    lang_var = IntVar(value=0) 
+
+    # Estilo común para los Radiobuttons
+    lang_style = {
+        "variable": lang_var,
+        "bg": "black",
+        "fg": "white",
+        "selectcolor": "#009C34", # El círculo se pondrá verde al seleccionar
+        "activebackground": "black",
+        "activeforeground": "white",
+        "highlightthickness": 0,
+        "font": ("Arial", 10)
+    }
+
+    # Radiobutton Español
+    rb_es = Radiobutton(frame_idioma, text="Español", value=0, **lang_style)
+    rb_es.grid(row=0, column=0)
+
+    # Radiobutton Inglés
+    rb_en = Radiobutton(frame_idioma, text="English", value=1, **lang_style)
+    rb_en.grid(row=0, column=1)
+
+    # Radiobutton Portugués
+    rb_pt = Radiobutton(frame_idioma, text="Português", value=2, **lang_style)
+    rb_pt.grid(row=0, column=2)
 
     # Botón jugar
-    ButtonWithHover(frame1, "JUGAR", lambda: launch_game(server, windowed, resolution))
+    ButtonWithHover(
+        frame1, 
+        "JUGAR", 
+        lambda: launch_game(
+            server_var.get(),
+            window_var.get(),
+            resolution_var.get(),
+            audio_var.get(),
+            music_var.get()
+        )
+    )

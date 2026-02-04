@@ -66,8 +66,9 @@ def set_window_resolution(resolution: int, ):
             f"No se pudo escribir en el registro\n{e}"
         )
 
-def launch_game(server, windowed, resolution):
-    
+def launch_game(server, windowed, resolution, audio, music):
+    set_window_mode(windowed)
+    set_window_resolution(resolution)
     # Validaciones
     if server not in SERVER_FILES:
         messagebox.showerror("Error", "Servidor inválido")
@@ -97,8 +98,7 @@ def launch_game(server, windowed, resolution):
         return
 
     # 2️⃣ Configurar modo ventana y resolucion
-    set_window_mode(windowed)
-    set_window_resolution(resolution)
+    
 
     # 3️⃣ Ejecutar MU
     try:

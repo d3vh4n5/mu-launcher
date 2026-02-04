@@ -8,9 +8,11 @@ from assets.imagenes_launcher_data import HERO
 from utils.image_converter import get_image_from_base64
 import pywinstyles
 from utils.styles import style
+from const.colors import bg_color
+from const.config import app_width
+
 class App():
     def __init__(self):
-        width=320
         # =========================
         # UI
         # =========================
@@ -19,7 +21,7 @@ class App():
         root.title(PROJECT_NAME)
         x = root.winfo_screenmmwidth() *  2
         y = int(root.winfo_screenheight() * 0.3)
-        root.geometry(f"{width}x620+"+ str(x) + '+' + str(y))
+        root.geometry(f"{app_width}x620+"+ str(x) + '+' + str(y))
         root.resizable(False, False)
         img_icon_data = base64.b64decode(ICONO_BASE64)
         with open("temp_icon.ico", "wb") as tmp:
@@ -29,15 +31,15 @@ class App():
         style(root)
         # --- Cargar y usar un logo (ejemplo) ---
         # Puedes ajustar el tamaño o no pasarlo si quieres el tamaño original
-        logo_mu_image_tk = get_image_from_base64(HERO, size=(width, 150))
+        logo_mu_image_tk = get_image_from_base64(HERO, size=(app_width, 150))
         logo_label = Label(root, image=logo_mu_image_tk, bd=0) # bd=0 para que no tenga borde
         logo_label.pack(pady=0) # Ejemplo de posicionamiento
 
         # -------- FRAMES -----------------------------
 
-        bg_color = "#000000"
+        
 
-        frame1= Frame(root, width=width, height=500, bg=bg_color, pady=40)
+        frame1= Frame(root, width=app_width, height=500, bg=bg_color, pady=40)
         frame2= Frame(root, bg=bg_color)
         # frame1.pack()
         # frame1.grid(row=0, column=0)
