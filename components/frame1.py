@@ -150,7 +150,7 @@ def load_frame1(frame1):
     volume_scale = Scale(
         frame_audio, from_=0, to=10, orient=HORIZONTAL, 
         variable=volume_var, bg="black", fg="white", 
-        troughcolor="#1a1a1a", highlightthickness=0, bd=0, length=200
+        troughcolor="#1a1a1a", highlightthickness=0, bd=0, length=200, command=lambda v: print(f"Volumen actual: {v}")
     )
     volume_scale.grid(row=2, column=0, columnspan=2, sticky='n')
 
@@ -163,33 +163,28 @@ def load_frame1(frame1):
     frame_idioma.grid_columnconfigure(1, weight=1)
     frame_idioma.grid_columnconfigure(2, weight=1)
 
-    # Variable para el idioma (0=Español, 1=Inglés, 2=Portugués)
-    # Puedes leer este valor del registro también
-    lang_var = IntVar(value=0) 
+    # Obtener valor y asegurar que sea un string válido
+    val_reg = get_registry_value("LangSelection")
+    lang_default = val_reg if val_reg in ["Spn", "Eng", "Por"] else "Spn"
 
-    # Estilo común para los Radiobuttons
+    lang_var = StringVar(value=lang_default)
+    frame_idioma.lang_var = lang_var # Evita que Python limpie la variable de la memoria
+
     lang_style = {
         "variable": lang_var,
         "bg": "black",
         "fg": "white",
-        "selectcolor": "#009C34", # El círculo se pondrá verde al seleccionar
+        "selectcolor": "#009C34",
         "activebackground": "black",
         "activeforeground": "white",
         "highlightthickness": 0,
         "font": ("Arial", 10)
     }
 
-    # Radiobutton Español
-    rb_es = Radiobutton(frame_idioma, text="Español", value=0, **lang_style)
-    rb_es.grid(row=0, column=0)
-
-    # Radiobutton Inglés
-    rb_en = Radiobutton(frame_idioma, text="English", value=1, **lang_style)
-    rb_en.grid(row=0, column=1)
-
-    # Radiobutton Portugués
-    rb_pt = Radiobutton(frame_idioma, text="Português", value=2, **lang_style)
-    rb_pt.grid(row=0, column=2)
+    # Radiobuttons
+    Radiobutton(frame_idioma, text="Español", value="Spn", **lang_style).grid(row=0, column=0)
+    Radiobutton(frame_idioma, text="English", value="Eng", **lang_style).grid(row=0, column=1)
+    Radiobutton(frame_idioma, text="Português", value="Por", **lang_style).grid(row=0, column=2)
 
     # Botón jugar
     ButtonWithHover(
@@ -201,7 +196,9 @@ def load_frame1(frame1):
             window_var.get(),
             resolution_var.get(),
             audio_var.get(),
-            music_var.get()
+            music_var.get(),
+            volume_var.get(),
+            lang_var.get()
         )
     )
 

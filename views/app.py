@@ -55,7 +55,7 @@ class App():
         
         load_frame1(frame1)
 
-        root.update() # Forzar a la ventana a existir internamente
+        #root.update() # Forzar a la ventana a existir internamente
         #pywinstyles.apply_style(root, "dark")
         pywinstyles.change_header_color(root, "#000000")
         root.mainloop()

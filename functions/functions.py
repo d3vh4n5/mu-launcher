@@ -21,20 +21,21 @@ def get_registry_value(clave):
     except (FileNotFoundError, OSError):
         return False
 
-def set_window_mode(windowed: bool):
+def set_reg_dword(var_name, var_value, reg_type = "REG_DWORD"):
     try:
         key = winreg.CreateKey(
             winreg.HKEY_CURRENT_USER,
             r"Software\Webzen\MU\config"
         )
 
-        # Modo ventana
         winreg.SetValueEx(
             key,
-            "WindowMode",
+            var_name,
             0,
-            winreg.REG_DWORD,
-            1 if windowed else 0
+            winreg.REG_DWORD 
+                if reg_type == "REG_DWORD" 
+                else winreg.REG_SZ,
+            var_value
         )
     except Exception as e:
         messagebox.showerror(
@@ -42,46 +43,29 @@ def set_window_mode(windowed: bool):
             f"No se pudo escribir en el registro\n{e}"
         )
 
-def set_window_resolution(resolution: int, ):
-    try:
-        key = winreg.CreateKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Webzen\MU\config"
-        )
 
-        resolution_number = RESOLUTION_MAP[resolution]
-        print(resolution_number)
-
-        # Resolucion
-        winreg.SetValueEx(
-            key,
-            "Resolution",
-            0,
-            winreg.REG_DWORD,
-            resolution_number
-        )
-    except Exception as e:
-        messagebox.showerror(
-            "Error",
-            f"No se pudo escribir en el registro\n{e}"
-        )
-
-def launch_game(server, windowed, resolution, audio, music):
-    set_window_mode(windowed)
-    set_window_resolution(resolution)
+def launch_game(server, windowed, resolution, audio, music, volume, lang):
+    set_reg_dword("WindowMode", windowed)
+    resolution_number = RESOLUTION_MAP[resolution]
+    set_reg_dword("Resolution", resolution_number)
+    set_reg_dword("SoundOnOff", audio)
+    set_reg_dword("MusicOnOff", music)
+    set_reg_dword("VolumeLevel", volume)
+    set_reg_dword("LangSelection", lang, "REG_SZ")
     # Validaciones
-    if server not in SERVER_FILES:
-        messagebox.showerror("Error", "Servidor inválido")
-        return
 
-    src = SERVER_FILES[server]
+    # if server not in SERVER_FILES:
+    #     messagebox.showerror("Error", "Servidor inválido")
+    #     return
 
-    if not src.exists():
-        messagebox.showerror(
-            "Error",
-            f"No existe el archivo:\n{src}"
-        )
-        return
+    # src = SERVER_FILES[server]
+
+    # if not src.exists():
+    #     messagebox.showerror(
+    #         "Error",
+    #         f"No existe el archivo:\n{src}"
+    #     )
+    #     return
 
     if not MAIN_EXE.exists():
         messagebox.showerror(
@@ -90,17 +74,15 @@ def launch_game(server, windowed, resolution, audio, music):
         )
         return
 
-    # 1️⃣ Copiar ServerInfo.sse
-    try:
-        shutil.copy(src, DEST_SERVERINFO)
-    except Exception as e:
-        messagebox.showerror("Error", f"Error copiando ServerInfo.sse\n{e}")
-        return
+    # Copiar ServerInfo.sse
+    # try:
+    #     shutil.copy(src, DEST_SERVERINFO)
+    # except Exception as e:
+    #     messagebox.showerror("Error", f"Error copiando ServerInfo.sse\n{e}")
+    #     return
 
-    # 2️⃣ Configurar modo ventana y resolucion
-    
 
-    # 3️⃣ Ejecutar MU
+    # Ejecutar MU
     try:
         subprocess.Popen(str(MAIN_EXE), cwd=str(MU_PATH))
     except Exception as e:

@@ -18,7 +18,7 @@ RESOLUTION_MAP = {
     "1600 x 900": 6,   # HD+
     "1920 x 1080": 7,  # Full HD (Muy común)
     "2560 x 1440": 8,  # 2K / QHD
-    "3840 x 2160": 9,  # 4K Ultra HD
+    #"3840 x 2160": 9,  # 4K Ultra HD
 }
 # Carpeta donde está ESTE launcher
 BASE_DIR = Path.cwd()
