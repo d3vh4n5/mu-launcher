@@ -2,7 +2,7 @@ from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, Stri
 from const.colors import *
 from const.config import PROJECT_NAME, RESOLUTION_MAP, SERVER_FILES, app_width
 from components.button import ButtonWithHover
-from functions.functions import launch_game, get_registry_value, abrir_enlace
+from functions.functions import launch_game, get_registry_value, abrir_enlace, set_reg_dword
 
 def load_frame1(frame1):
     frame1.pack_propagate(False)
@@ -61,6 +61,10 @@ def load_frame1(frame1):
     )
     resolution_combo.pack(pady=5)
     resolution_combo.textvariable = resolution_var
+    resolution_combo.bind(
+        "<<ComboboxSelected>>",
+        lambda e: set_reg_dword("Resolution", RESOLUTION_MAP[resolution_var.get()])
+    )
 
     # Modo ventana
     window_var = BooleanVar(value=True)
@@ -81,7 +85,8 @@ def load_frame1(frame1):
         activebackground="black", # Fondo cuando haces clic
         activeforeground="white", # Texto cuando haces clic
         highlightthickness=0,     # Quita el borde gris de enfoque
-        bd=0                      # Quita bordes extra
+        bd=0,                      # Quita bordes extra
+        command=lambda: set_reg_dword("WindowMode", 1 if window_var.get() else 0)
     )
     check.pack(pady=10)
     check.variable = window_var
@@ -111,7 +116,8 @@ def load_frame1(frame1):
         activebackground="black", # Fondo cuando haces clic
         activeforeground="white", # Texto cuando haces clic
         highlightthickness=0,     # Quita el borde gris de enfoque
-        bd=0                      # Quita bordes extra
+        bd=0,                      # Quita bordes extra
+        command=lambda: set_reg_dword("SoundOnOff", 1 if audio_var.get() else 0)
     )
     audio_check.grid(row=0, column=0, sticky='e', padx=10, pady=20)
     audio_check.variable = audio_var
@@ -135,7 +141,8 @@ def load_frame1(frame1):
         activebackground="black", # Fondo cuando haces clic
         activeforeground="white", # Texto cuando haces clic
         highlightthickness=0,     # Quita el borde gris de enfoque
-        bd=0                      # Quita bordes extra
+        bd=0,                      # Quita bordes extra
+        command=lambda: set_reg_dword("MusicOnOff", 1 if music_var.get() else 0)
     )
     music_check.grid(row=0, column=1, sticky='w', padx=10, pady=20)
     music_check.variable = music_var
@@ -150,7 +157,9 @@ def load_frame1(frame1):
     volume_scale = Scale(
         frame_audio, from_=0, to=10, orient=HORIZONTAL, 
         variable=volume_var, bg="black", fg="white", 
-        troughcolor="#1a1a1a", highlightthickness=0, bd=0, length=200, command=lambda v: print(f"Volumen actual: {v}")
+        troughcolor="#1a1a1a", highlightthickness=0,
+        bd=0, length=200,
+        command=lambda v: set_reg_dword("VolumeLevel", int(v))
     )
     volume_scale.grid(row=2, column=0, columnspan=2, sticky='n')
 
@@ -178,7 +187,8 @@ def load_frame1(frame1):
         "activebackground": "black",
         "activeforeground": "white",
         "highlightthickness": 0,
-        "font": ("Arial", 10)
+        "font": ("Arial", 10),
+        "command": lambda: set_reg_dword("LangSelection", lang_var.get(), "REG_SZ")
     }
 
     # Radiobuttons
