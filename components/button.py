@@ -2,7 +2,7 @@ from const.colors import *
 from tkinter import Button
 from const.colors import *
 
-font_size=9
+font_size=10
 
 class ButtonWithHover():
     def __init__(self, frame, text, cmd): 
@@ -13,7 +13,8 @@ class ButtonWithHover():
                 fg='white',
                 bg=primary_color,
                 command=cmd,
-                font=("Arial", font_size, "bold")
+                font=("Arial", font_size, "bold"),
+                pady=6
             )
         self.btn.pack()
         self.btn.bind("<Enter>", self.on_hover)

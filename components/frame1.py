@@ -2,7 +2,7 @@ from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, Stri
 from const.colors import *
 from const.config import PROJECT_NAME, RESOLUTION_MAP, SERVER_FILES, app_width
 from components.button import ButtonWithHover
-from functions.functions import launch_game, get_registry_value
+from functions.functions import launch_game, get_registry_value, abrir_enlace
 
 def load_frame1(frame1):
     frame1.pack_propagate(False)
@@ -14,25 +14,25 @@ def load_frame1(frame1):
         fg="white",
     ).pack(pady=10)
 
-    # Selector de servidor
-    Label(
-        frame1,
-        bg="black",
-        fg="white",
-        text="Servidor"
-    ).pack()
-    server_var = StringVar(value="Online")
+    # # Selector de servidor
+    # Label(
+    #     frame1,
+    #     bg="black",
+    #     fg="white",
+    #     text="Servidor"
+    # ).pack()
+    # server_var = StringVar(value="Online")
 
-    server_combo = ttk.Combobox(
-        frame1,
-        textvariable=server_var,
-        values=list(SERVER_FILES.keys()),
-        state="readonly",
-        width=40,
-    )
-    server_combo.pack(pady=5)
-    server_combo.set("Online")
-    server_combo.textvariable = server_var #Refuerzo el valor de la variable porque dentro de funciones se pierde
+    # server_combo = ttk.Combobox(
+    #     frame1,
+    #     textvariable=server_var,
+    #     values=list(SERVER_FILES.keys()),
+    #     state="readonly",
+    #     width=40,
+    # )
+    # server_combo.pack(pady=5)
+    # server_combo.set("Online")
+    # server_combo.textvariable = server_var #Refuerzo el valor de la variable porque dentro de funciones se pierde
 
     
 
@@ -57,7 +57,7 @@ def load_frame1(frame1):
         textvariable=resolution_var,
         values=list(RESOLUTION_MAP.keys()),
         state="readonly",
-        width=40
+        width=44
     )
     resolution_combo.pack(pady=5)
     resolution_combo.textvariable = resolution_var
@@ -86,9 +86,11 @@ def load_frame1(frame1):
     check.pack(pady=10)
     check.variable = window_var
 
-    frame_audio = Frame(frame1, width=app_width, height=200, bg=bg_color)
-    frame_audio.pack(pady=20)
+    frame_audio = Frame(frame1, width=app_width, height=200, bg="#0C0C0C")
+    frame_audio.pack(pady=20, fill="x")
     frame_audio.pack_propagate(False)
+    frame_audio.grid_columnconfigure(0, weight=1)
+    frame_audio.grid_columnconfigure(1, weight=1)
 
     ### Audio On/Off
     audio_var = BooleanVar(value=True)
@@ -111,7 +113,7 @@ def load_frame1(frame1):
         highlightthickness=0,     # Quita el borde gris de enfoque
         bd=0                      # Quita bordes extra
     )
-    audio_check.grid(row=0, column=0, sticky='e', padx=10, pady=10)
+    audio_check.grid(row=0, column=0, sticky='e', padx=10, pady=20)
     audio_check.variable = audio_var
 
      ### Music On/Off
@@ -135,7 +137,7 @@ def load_frame1(frame1):
         highlightthickness=0,     # Quita el borde gris de enfoque
         bd=0                      # Quita bordes extra
     )
-    music_check.grid(row=0, column=1, sticky='e', padx=10, pady=10)
+    music_check.grid(row=0, column=1, sticky='w', padx=10, pady=20)
     music_check.variable = music_var
 
     # Variable para el volumen (0 a 10)
@@ -150,11 +152,11 @@ def load_frame1(frame1):
         variable=volume_var, bg="black", fg="white", 
         troughcolor="#1a1a1a", highlightthickness=0, bd=0, length=200
     )
-    volume_scale.grid(row=2, column=0, columnspan=2)
+    volume_scale.grid(row=2, column=0, columnspan=2, sticky='n')
 
     # Frame para Idiomas (dentro de frame1)
     frame_idioma = Frame(frame1, bg="black")
-    frame_idioma.pack(pady=10, fill='x')
+    frame_idioma.pack(pady=(10, 30), fill='x')
     
     # Configuramos las 3 columnas para que tengan el mismo ancho
     frame_idioma.grid_columnconfigure(0, weight=1)
@@ -194,10 +196,17 @@ def load_frame1(frame1):
         frame1, 
         "JUGAR", 
         lambda: launch_game(
-            server_var.get(),
+            # server_var.get(),
+            "Online",
             window_var.get(),
             resolution_var.get(),
             audio_var.get(),
             music_var.get()
         )
     )
+
+    # Enlace
+    label = Label(frame1, text="Registrarse", fg="dodger blue", cursor="hand2", font=("Arial", 10))
+    label.config(bg=bg_color, pady=30)
+    label.pack(pady=(20, 0))
+    label.bind("<Button-1>", abrir_enlace)

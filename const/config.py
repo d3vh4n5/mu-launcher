@@ -5,7 +5,7 @@ PROJECT_NAME="Mu Launcher"
 # =========================
 # CONFIGURACIÓN
 # =========================
-app_width=320
+app_width=330
 
 RESOLUTION_MAP = {
     "640 x 480": 0,

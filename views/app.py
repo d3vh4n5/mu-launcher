@@ -17,11 +17,11 @@ class App():
         # UI
         # =========================
         root = Tk()
-        #root.overrideredirect(True)
+        #root.overrideredirect(True) #Elimina la barra de ventana
         root.title(PROJECT_NAME)
         x = root.winfo_screenmmwidth() *  2
         y = int(root.winfo_screenheight() * 0.3)
-        root.geometry(f"{app_width}x620+"+ str(x) + '+' + str(y))
+        root.geometry(f"{app_width}x650+"+ str(x) + '+' + str(y))
         root.resizable(False, False)
         img_icon_data = base64.b64decode(ICONO_BASE64)
         with open("temp_icon.ico", "wb") as tmp:
@@ -39,7 +39,7 @@ class App():
 
         
 
-        frame1= Frame(root, width=app_width, height=500, bg=bg_color, pady=40)
+        frame1= Frame(root, width=app_width, height=500, bg=bg_color, pady=30)
         frame2= Frame(root, bg=bg_color)
         # frame1.pack()
         # frame1.grid(row=0, column=0)

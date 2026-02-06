@@ -1,8 +1,8 @@
 from tkinter import ttk, messagebox
-
 import shutil
 import subprocess
 import winreg
+import webbrowser
 
 from const.config import *
 
@@ -106,3 +106,7 @@ def launch_game(server, windowed, resolution, audio, music):
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo ejecutar el juego\n{e}")
         return
+
+def abrir_enlace(event):
+    url = "https://mu-front.vercel.app/register"
+    webbrowser.open(url)
