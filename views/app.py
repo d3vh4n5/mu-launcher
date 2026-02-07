@@ -96,7 +96,7 @@ class App():
         # label.pack(pady=(10, 0))
         # label.bind("<Button-1>", abrir_enlace)
 
-        version = Label(root, text="Version: 1.0.0", fg="white", font=("Courier New", 8))
+        version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: 1.0.0", fg="white", font=("Courier New", 8))
         version.config(bg=bg_color, pady=10)
         version.pack(pady=(30, 0))
         #root.update() # Forzar a la ventana a existir internamente

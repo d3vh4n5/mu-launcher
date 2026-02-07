@@ -8,6 +8,7 @@ TEXTS = {
         "register": "Registrarse",
         "language": "Idioma",
         "volume": "Volumen",
+        "version": "Versión"
     },
     "Eng": {
         "resolution": "Resolution",
@@ -18,6 +19,7 @@ TEXTS = {
         "register": "Register Now",
         "language": "Language",
         "volume": "Volume",
+        "version": "Version"
     },
     "Por": {
         "volume": "Volume",
@@ -27,6 +29,7 @@ TEXTS = {
         "window_mode": "Modo Janela",
         "play": "JOGAR",
         "register": "Registrar-se",
-        "language": "Idioma"
+        "language": "Idioma",
+        "version": "Versão"
     }
 }
