@@ -5,7 +5,7 @@ from functions.functions import get_registry_value, abrir_enlace, set_reg_dword
 from utils.state import AppState
 
 def load_frame_window(frame1, state: AppState):
-    frame1.pack_propagate(False)
+    #frame1.pack_propagate(False)
 
     # # Selector de servidor
     # Label(

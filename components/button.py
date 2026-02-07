@@ -16,7 +16,7 @@ class ButtonWithHover():
                 font=("Arial", font_size, "bold"),
                 pady=6
             )
-        self.btn.pack()
+        self.btn.pack(pady=10)
         self.btn.bind("<Enter>", self.on_hover)
         self.btn.bind("<Leave>", self.on_leave)
 

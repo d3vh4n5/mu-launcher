@@ -34,6 +34,8 @@ class App():
         root.iconbitmap("temp_icon.ico")
         os.remove("temp_icon.ico")
         style(root)
+        root.configure(bg=bg_color)
+
         # --- Cargar y usar un logo (ejemplo) ---
         # Puedes ajustar el tamaño o no pasarlo si quieres el tamaño original
         logo_mu_image_tk = get_image_from_base64(HERO, size=(app_width, 150))
@@ -44,14 +46,14 @@ class App():
             root,
             text=PROJECT_NAME,
             font=("Arial", 14, "bold"),
-            bg="black",
+            bg=bg_color,
             fg="white",
         ).pack(pady=10)
 
         # -------- FRAMES -----------------------------
-        frame_window= Frame(root, width=app_width, height=300, bg=bg_color, pady=30)
+        frame_window= Frame(root, width=app_width, bg=bg_color)
         #frame2= Frame(root, bg=bg_color)
-        frame_audio = Frame(root, width=app_width, height=200, bg=bg_color)
+        frame_audio = Frame(root, width=app_width, bg="#0A0A0A")
         #frame_audio.pack(pady=20, fill="x")
         frame_idioma = Frame(root, bg=bg_color)
         #frame_idioma.pack(pady=(10, 30), fill='x')
@@ -62,7 +64,7 @@ class App():
         frames.append(frame_idioma)
 
         for frame in frames:
-            frame.pack()
+            frame.pack(fill="x", pady=10)
 
         state = AppState()
 
@@ -88,8 +90,8 @@ class App():
 
         # Enlace
         label = Label(root, text="Registrarse", fg="dodger blue", cursor="hand2", font=("Arial", 10))
-        label.config(bg=bg_color, pady=30)
-        label.pack(pady=(20, 0))
+        label.config(bg=bg_color, pady=10)
+        label.pack(pady=(10, 0))
         label.bind("<Button-1>", abrir_enlace)
 
         #root.update() # Forzar a la ventana a existir internamente
