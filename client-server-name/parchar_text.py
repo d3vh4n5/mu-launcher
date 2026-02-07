@@ -57,7 +57,7 @@ def patch_3byte_xor(filename, old_str, new_str):
 
     if found_count > 0:
         print(f"\n¡ÉXITO! Se reemplazaron {found_count} ocurrencias.")
-        new_filename = "Text_Eng_Fixed.bmd"
+        new_filename = f"{filename}Fixed.bmd"
         with open(new_filename, 'wb') as f:
             f.write(data)
         print(f"Archivo guardado como: {new_filename}")
@@ -69,3 +69,5 @@ def patch_3byte_xor(filename, old_str, new_str):
 # Cambia "Angel" por el nombre que quieras. Max 5 letras si reemplazas SSeMU.
 # Si quieres poner un nombre largo, avísame, porque SSeMU es corto.
 patch_3byte_xor("Text_Eng.bmd", "SSeMU", "Mu Campana")
+patch_3byte_xor("Text_Por.bmd", "SSeMU", "Mu Campana")
+patch_3byte_xor("Text_Spn.bmd", "SSeMU", "Mu Campana")

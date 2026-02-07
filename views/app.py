@@ -15,6 +15,7 @@ from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color
 from const.config import app_width
+from const.texts import TEXTS
 
 class App():
     def __init__(self):
@@ -23,7 +24,7 @@ class App():
         # =========================
         root = Tk()
         #root.overrideredirect(True) #Elimina la barra de ventana
-        root.title(PROJECT_NAME)
+        root.title("Mu Launcher - Hanster")
         x = root.winfo_screenmmwidth() *  2
         y = int(root.winfo_screenheight() * 0.3)
         root.geometry(f"{app_width}x650+"+ str(x) + '+' + str(y))
@@ -42,6 +43,7 @@ class App():
         logo_label = Label(root, image=logo_mu_image_tk, bd=0) # bd=0 para que no tenga borde
         logo_label.pack(pady=0) # Ejemplo de posicionamiento
 
+        # Titulo
         Label(
             root,
             text=PROJECT_NAME,
@@ -75,7 +77,7 @@ class App():
         # Botón jugar
         ButtonWithHover(
             root, 
-            "JUGAR", 
+            TEXTS[state.lang.get()]["play"], 
             lambda: launch_game(
                 # server_var.get(),
                 "Online",
@@ -89,11 +91,14 @@ class App():
         )
 
         # Enlace
-        label = Label(root, text="Registrarse", fg="dodger blue", cursor="hand2", font=("Arial", 10))
-        label.config(bg=bg_color, pady=10)
-        label.pack(pady=(10, 0))
-        label.bind("<Button-1>", abrir_enlace)
+        # label = Label(root, text=TEXTS[state.lang.get()]["register"], fg="dodger blue", cursor="hand2", font=("Arial", 10))
+        # label.config(bg=bg_color, pady=10)
+        # label.pack(pady=(10, 0))
+        # label.bind("<Button-1>", abrir_enlace)
 
+        version = Label(root, text="Version: 1.0.0", fg="white", font=("Courier New", 8))
+        version.config(bg=bg_color, pady=10)
+        version.pack(pady=(30, 0))
         #root.update() # Forzar a la ventana a existir internamente
         #pywinstyles.apply_style(root, "dark")
         pywinstyles.change_header_color(root, "#000000")

@@ -1,6 +1,7 @@
 from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, StringVar, Label, IntVar, Radiobutton
 from const.colors import *
 from const.config import PROJECT_NAME, RESOLUTION_MAP
+from const.texts import TEXTS
 from functions.functions import get_registry_value, abrir_enlace, set_reg_dword
 from utils.state import AppState
 
@@ -32,7 +33,7 @@ def load_frame_window(frame1, state: AppState):
     # resolucion
     Label(
         frame1,
-        text="Resolución",
+        text=TEXTS[state.lang.get()]["resolution"],
         bg="black",
         fg="white",
     ).pack()
@@ -55,7 +56,7 @@ def load_frame_window(frame1, state: AppState):
 
     check = Checkbutton(
         frame1,
-        text="Modo ventana",
+        text=TEXTS[state.lang.get()]["window_mode"],
         variable=state.window_mode,
         bg="black",           # Fondo normal
         fg="white",           # Color del texto

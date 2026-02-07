@@ -1,4 +1,5 @@
 from tkinter import HORIZONTAL, Label, Scale, Checkbutton
+from const.texts import TEXTS
 from utils.state import AppState
 
 def load_frame_audio(frame_audio, state: AppState):
@@ -9,7 +10,7 @@ def load_frame_audio(frame_audio, state: AppState):
     ### Audio On/Off
     audio_check = Checkbutton(
         frame_audio,
-        text="Audio",
+        text=TEXTS[state.lang.get()]["audio"],
         variable=state.audio,
         bg="black",           # Fondo normal
         fg="white",           # Color del texto
@@ -27,7 +28,7 @@ def load_frame_audio(frame_audio, state: AppState):
 
     music_check = Checkbutton(
         frame_audio,
-        text="Music",
+        text=TEXTS[state.lang.get()]["music"],
         variable=state.music,
         bg="black",           # Fondo normal
         fg="white",           # Color del texto
@@ -42,7 +43,7 @@ def load_frame_audio(frame_audio, state: AppState):
     music_check.variable = state.music
 
     # Fila 1: Etiqueta de volumen
-    Label(frame_audio, text="Volumen", bg="black", fg="white", font=("Arial", 8)).grid(row=1, column=0, columnspan=2)
+    Label(frame_audio, text=TEXTS[state.lang.get()]["volume"], bg="black", fg="white", font=("Arial", 8)).grid(row=1, column=0, columnspan=2)
 
     # Fila 2: La barra
     volume_scale = Scale(
