@@ -1,12 +1,17 @@
-from tkinter import Tk, Label, Frame
-from components.frame1 import load_frame1
+from tkinter import Button, Tk, Label, Frame
+from components.button import ButtonWithHover
+from components.frame_lang import load_frame_lang
+from components.frame_window import load_frame_window
+from components.frame_audio import load_frame_audio
 from const.config import PROJECT_NAME
 import base64
 import os
 from assets.icono_data import ICONO_BASE64
 from assets.imagenes_launcher_data import HERO
+from functions.functions import abrir_enlace, launch_game
 from utils.image_converter import get_image_from_base64
 import pywinstyles
+from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color
 from const.config import app_width
@@ -35,25 +40,57 @@ class App():
         logo_label = Label(root, image=logo_mu_image_tk, bd=0) # bd=0 para que no tenga borde
         logo_label.pack(pady=0) # Ejemplo de posicionamiento
 
+        Label(
+            root,
+            text=PROJECT_NAME,
+            font=("Arial", 14, "bold"),
+            bg="black",
+            fg="white",
+        ).pack(pady=10)
+
         # -------- FRAMES -----------------------------
-
-        
-
-        frame1= Frame(root, width=app_width, height=500, bg=bg_color, pady=30)
-        frame2= Frame(root, bg=bg_color)
-        # frame1.pack()
-        # frame1.grid(row=0, column=0)
+        frame_window= Frame(root, width=app_width, height=300, bg=bg_color, pady=30)
+        #frame2= Frame(root, bg=bg_color)
+        frame_audio = Frame(root, width=app_width, height=200, bg=bg_color)
+        #frame_audio.pack(pady=20, fill="x")
+        frame_idioma = Frame(root, bg=bg_color)
+        #frame_idioma.pack(pady=(10, 30), fill='x')
 
         frames = []
-        frames.append(frame1)
-        #frames.append(frame2)
+        frames.append(frame_window)
+        frames.append(frame_audio)
+        frames.append(frame_idioma)
 
-        # for frame in (frame1, frame2):
-            # frame.grid(row=0, column=0)
         for frame in frames:
             frame.pack()
-        
-        load_frame1(frame1)
+
+        state = AppState()
+
+        load_frame_window(frame_window, state)
+        load_frame_audio(frame_audio, state)
+        load_frame_lang(frame_idioma, state)
+
+        # Botón jugar
+        ButtonWithHover(
+            root, 
+            "JUGAR", 
+            lambda: launch_game(
+                # server_var.get(),
+                "Online",
+                state.window_mode.get(),
+                state.resolution.get(),
+                state.audio.get(),
+                state.music.get(),
+                state.volume.get(),
+                state.lang.get()
+            )
+        )
+
+        # Enlace
+        label = Label(root, text="Registrarse", fg="dodger blue", cursor="hand2", font=("Arial", 10))
+        label.config(bg=bg_color, pady=30)
+        label.pack(pady=(20, 0))
+        label.bind("<Button-1>", abrir_enlace)
 
         #root.update() # Forzar a la ventana a existir internamente
         #pywinstyles.apply_style(root, "dark")
