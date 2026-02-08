@@ -1,4 +1,4 @@
-
+from const.colors import primary_color
 from tkinter import Radiobutton
 from utils.state import AppState
 
@@ -17,7 +17,7 @@ def load_frame_lang(frame_idioma, state: AppState):
         for rb in radios:
             # rb.cget("value") nos da el 'value' que le asignamos (Spn, Eng, o Por)
             if rb.cget("value") == seleccionado:
-                rb.config(fg="#009C34") # Color para el seleccionado
+                rb.config(fg=primary_color) # Color para el seleccionado
             else:
                 rb.config(fg="white") # Color para los no seleccionados
 

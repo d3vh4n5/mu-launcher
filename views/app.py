@@ -14,7 +14,7 @@ import pywinstyles
 from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color
-from const.config import app_width
+from const.config import app_width, VERSION
 from const.texts import TEXTS
 
 class App():
@@ -96,7 +96,7 @@ class App():
         # label.pack(pady=(10, 0))
         # label.bind("<Button-1>", abrir_enlace)
 
-        version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: 1.0.0", fg="white", font=("Courier New", 8))
+        version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: {VERSION}", fg="white", font=("Courier New", 8))
         version.config(bg=bg_color, pady=10)
         version.pack(pady=(30, 0))
         #root.update() # Forzar a la ventana a existir internamente

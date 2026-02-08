@@ -1,1 +1,1 @@
-pyinstaller --onefile --windowed --icon=icon.ico launcher.py
+pyinstaller --noconfirm --onefile --windowed --uac-admin --icon=icon.ico launcher.py

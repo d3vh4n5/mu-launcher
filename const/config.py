@@ -1,7 +1,7 @@
 from pathlib import Path
 
 PROJECT_NAME="Mu Launcher"
-
+VERSION="1.0.1"
 # =========================
 # CONFIGURACIÓN
 # =========================
