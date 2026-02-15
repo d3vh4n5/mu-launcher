@@ -1,4 +1,5 @@
 from tkinter import Button, Tk, Label, Frame
+from customtkinter import CTk
 from components.button import ButtonWithHover
 from components.frame_lang import load_frame_lang
 from components.frame_window import load_frame_window
@@ -14,7 +15,7 @@ import pywinstyles
 from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color
-from const.config import app_width, VERSION
+from const.config import app_width,app_heigh, VERSION
 from const.texts import TEXTS
 
 class App():
@@ -27,7 +28,7 @@ class App():
         root.title("Mu Launcher - Hanster")
         x = root.winfo_screenmmwidth() *  2
         y = int(root.winfo_screenheight() * 0.3)
-        root.geometry(f"{app_width}x650+"+ str(x) + '+' + str(y))
+        root.geometry(f"{app_width}x{app_heigh}+"+ str(x) + '+' + str(y))
         root.resizable(False, False)
         img_icon_data = base64.b64decode(ICONO_BASE64)
         with open("temp_icon.ico", "wb") as tmp:
@@ -35,7 +36,7 @@ class App():
         root.iconbitmap("temp_icon.ico")
         os.remove("temp_icon.ico")
         style(root)
-        root.configure(bg=bg_color)
+        root.config(bg=bg_color)
 
         # --- Cargar y usar un logo (ejemplo) ---
         # Puedes ajustar el tamaño o no pasarlo si quieres el tamaño original
@@ -55,7 +56,7 @@ class App():
         # -------- FRAMES -----------------------------
         frame_window= Frame(root, width=app_width, bg=bg_color)
         #frame2= Frame(root, bg=bg_color)
-        frame_audio = Frame(root, width=app_width, bg="#0A0A0A")
+        frame_audio = Frame(root, width=app_width, bg="#0A0A0A", pady=10)
         #frame_audio.pack(pady=20, fill="x")
         frame_idioma = Frame(root, bg=bg_color)
         #frame_idioma.pack(pady=(10, 30), fill='x')
@@ -98,7 +99,7 @@ class App():
 
         version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: {VERSION}", fg="white", font=("Courier New", 8))
         version.config(bg=bg_color, pady=10)
-        version.pack(pady=(30, 0))
+        version.pack(pady=(10, 0))
         #root.update() # Forzar a la ventana a existir internamente
         #pywinstyles.apply_style(root, "dark")
         pywinstyles.change_header_color(root, "#000000")

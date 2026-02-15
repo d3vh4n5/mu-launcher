@@ -1,11 +1,12 @@
 from pathlib import Path
 
 PROJECT_NAME="Mu Launcher"
-VERSION="1.0.2"
+VERSION="1.0.3"
 # =========================
 # CONFIGURACIÓN
 # =========================
-app_width=330
+app_width=300
+app_heigh=600
 
 RESOLUTION_MAP = {
     "640 x 480": 0,

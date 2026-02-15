@@ -1,4 +1,5 @@
 from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, StringVar, Label, IntVar, Radiobutton
+from customtkinter import CTkComboBox, CTkCheckBox
 from const.colors import *
 from const.config import PROJECT_NAME, RESOLUTION_MAP
 from const.texts import TEXTS
@@ -38,34 +39,30 @@ def load_frame_window(frame1, state: AppState):
         fg="white",
     ).pack()
 
-    resolution_combo = ttk.Combobox(
+    resolution_combo = CTkComboBox(
         frame1,
-        textvariable=state.resolution,
+        variable=state.resolution,
         values=list(RESOLUTION_MAP.keys()),
         state="readonly",
-        width=44
+        width=250,
+        border_color=primary_color,
+        button_color=primary_color,
+        button_hover_color="#AA8A2E",
+        command=state.save_resolution
     )
     resolution_combo.pack(pady=5)
-    resolution_combo.textvariable = state.resolution
-    resolution_combo.bind(
-        "<<ComboboxSelected>>",
-        state.save_resolution
-    )
+    resolution_combo.variable = state.resolution
 
     # Modo ventana
 
-    check = Checkbutton(
+    check = CTkCheckBox(
         frame1,
         text=TEXTS[state.lang.get()]["window_mode"],
         variable=state.window_mode,
-        bg="black",           # Fondo normal
-        fg="white",           # Color del texto
-        selectcolor="black",  # <--- IMPORTANTE: Fondo de la cajita del tick
-        activebackground="black", # Fondo cuando haces clic
-        activeforeground="white", # Texto cuando haces clic
-        highlightthickness=0,     # Quita el borde gris de enfoque
-        bd=0,                      # Quita bordes extra
-        command=state.save_window_mode
+        command=state.save_window_mode,
+        checkbox_width=20,
+        checkbox_height=20,
+        fg_color=primary_color
     )
     check.pack(pady=10)
     check.variable = state.window_mode
