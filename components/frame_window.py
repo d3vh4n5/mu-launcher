@@ -47,7 +47,6 @@ def load_frame_window(frame1, state: AppState):
         width=250,
         border_color=primary_color,
         button_color=primary_color,
-        button_hover_color="#AA8A2E",
         command=state.save_resolution
     )
     resolution_combo.pack(pady=5)

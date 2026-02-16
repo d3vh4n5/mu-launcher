@@ -1,22 +1,28 @@
+
+# Este archivo define el componente ButtonWithHover, que es un botón personalizado con efectos de hover.
+# Se utilizaba en la vista principal para el botón de "Jugar".
+
 from const.colors import *
-import tkinter
+from tkinter import Button
 from const.colors import *
-from customtkinter import CTkButton
 
 font_size=10
 
 class ButtonWithHover():
     def __init__(self, frame, text, cmd): 
-        self.btn = CTkButton(
+        self.btn = Button(
                 frame,
                 text=text,
-                width=250,
+                width=35,
+                fg='white',
+                bg=primary_color,
                 command=cmd,
-                anchor=tkinter.CENTER
+                font=("Arial", font_size, "bold"),
+                pady=6
             )
-        self.btn.pack(pady=(10, 0))
-        # self.btn.bind("<Enter>", self.on_hover)
-        # self.btn.bind("<Leave>", self.on_leave)
+        self.btn.pack(pady=(30, 0))
+        self.btn.bind("<Enter>", self.on_hover)
+        self.btn.bind("<Leave>", self.on_leave)
 
     def on_hover(self, event):
         event.widget.configure(bg=primary_color_light, font=("Arial", font_size, "bold"))
