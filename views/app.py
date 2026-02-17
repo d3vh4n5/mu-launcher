@@ -4,6 +4,7 @@ import customtkinter as ctk
 from components.frame_lang import load_frame_lang
 from components.frame_window import load_frame_window
 from components.frame_audio import load_frame_audio
+from components.frame_server import load_frame_server
 from const.config import PROJECT_NAME
 import base64
 import os
@@ -15,7 +16,7 @@ import pywinstyles
 from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color, primary_color
-from const.config import app_width,app_heigh, VERSION
+from const.config import app_width,app_heigh, VERSION, components_width
 from const.texts import TEXTS
 
 class App():
@@ -28,7 +29,7 @@ class App():
         ctk.set_window_scaling(1.0)  # La ventana mantiene su tamaño exacto en píxeles
         root = ctk.CTk()
         #root.overrideredirect(True) #Elimina la barra de ventana
-        root.title("Mu Launcher - Hanster")
+        root.title(PROJECT_NAME)
 
         x = root.winfo_screenmmwidth() *  2
         y = int(root.winfo_screenheight() * 0.3)
@@ -43,6 +44,9 @@ class App():
         style(root)
         root.config(bg=bg_color)
         root.attributes("-alpha", 0.9)
+
+        #Creo el estado de la app
+        state = AppState()
 
         # --- Cargar y usar un logo (ejemplo) ---
         # Puedes ajustar el tamaño o no pasarlo si quieres el tamaño original
@@ -60,6 +64,26 @@ class App():
             fg="white",
         ).pack(pady=10)
 
+        # Botón jugar
+        btn = ctk.CTkButton(
+            root,
+            text=TEXTS[state.lang.get()]["play"],
+            width=components_width,
+            anchor=tkinter.CENTER,
+            fg_color=primary_color,
+            state="disabled" if state.can_launch == False else "normal", # Lo habilitaremos una vez cargados los servidores
+            command=lambda: launch_game(
+                # server_var.get(),
+                "Online",
+                state.window_mode.get(),
+                state.resolution.get(),
+                state.audio.get(),
+                state.music.get(),
+                state.volume.get(),
+                state.lang.get()
+            ),
+        )
+
         # -------- FRAMES -----------------------------
         frame_window= Frame(root, width=app_width, bg=bg_color)
         frame_audio = Frame(root, width=app_width, bg="#0A0A0A", pady=10)
@@ -73,41 +97,24 @@ class App():
         for frame in frames:
             frame.pack(fill="x", pady=10)
 
-        state = AppState()
 
         load_frame_window(frame_window, state)
         load_frame_audio(frame_audio, state)
-        load_frame_lang(frame_idioma, state)
+        load_frame_server(frame_idioma, state, btn)
 
-        # Botón jugar
-        btn = ctk.CTkButton(
-                root,
-                text=TEXTS[state.lang.get()]["play"],
-                width=250,
-                anchor=tkinter.CENTER,
-                fg_color=primary_color,
-                command=lambda: launch_game(
-                    # server_var.get(),
-                    "Online",
-                    state.window_mode.get(),
-                    state.resolution.get(),
-                    state.audio.get(),
-                    state.music.get(),
-                    state.volume.get(),
-                    state.lang.get()
-                ),
-            )
+        #Aqc'a cargo el btn a la GUI
         btn.pack(pady=(10, 0))
 
         # Enlace
-        # label = Label(root, text=TEXTS[state.lang.get()]["register"], fg="dodger blue", cursor="hand2", font=("Arial", 10))
-        # label.config(bg=bg_color, pady=10)
-        # label.pack(pady=(10, 0))
-        # label.bind("<Button-1>", abrir_enlace)
+        label = Label(root, text=TEXTS[state.lang.get()]["register"], fg="dodger blue", cursor="hand2", font=("Arial", 10))
+        label.config(bg=bg_color, pady=10)
+        label.pack(pady=(10, 0))
+        label.bind("<Button-1>", abrir_enlace)
 
         version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: {VERSION}", fg="white", font=("Courier New", 8))
-        version.config(bg=bg_color, pady=10)
+        version.config(bg=bg_color, fg="#adadad", pady=10)
         version.pack(pady=(10, 0))
+
         #root.update() # Forzar a la ventana a existir internamente
         #pywinstyles.apply_style(root, "dark") # Aplica el estilo oscuro a la ventana (si es compatible)
         pywinstyles.change_header_color(root, "#000000")

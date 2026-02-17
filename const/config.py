@@ -1,12 +1,15 @@
 from pathlib import Path
 
-PROJECT_NAME="Mu Launcher"
-VERSION="1.0.3"
+PROJECT_NAME="Mu Campana"
+VERSION="1.1.0"
+REGISTER_URL= "https://mu-front.vercel.app/register"
+API_URL="http://localhost:3000"
 # =========================
 # CONFIGURACIÓN
 # =========================
 app_width=300
-app_heigh=600
+app_heigh=630
+components_width=250
 
 RESOLUTION_MAP = {
     "640 x 480": 0,

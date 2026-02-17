@@ -7,6 +7,7 @@ mapa_invertido = {v: k for k, v in RESOLUTION_MAP.items()}
 
 class AppState:
     def __init__(self):
+        self.can_launch = False
         self.window_mode= BooleanVar(value=get_registry_value("WindowMode") == 1)
         val_registro = get_registry_value("Resolution")
         self.resolution = StringVar(
@@ -41,3 +42,6 @@ class AppState:
 
     def save_lang(self):
         set_reg_dword("LangSelection", self.lang.get(), "REG_SZ")
+    
+    def set_can_launch(self, value: bool):
+        self.can_launch = value

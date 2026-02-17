@@ -1,7 +1,7 @@
 from tkinter import HORIZONTAL, Frame, Scale, ttk, Checkbutton, BooleanVar, StringVar, Label, IntVar, Radiobutton
 from customtkinter import CTkComboBox, CTkCheckBox
 from const.colors import *
-from const.config import PROJECT_NAME, RESOLUTION_MAP
+from const.config import RESOLUTION_MAP, components_width
 from const.texts import TEXTS
 from functions.functions import get_registry_value, abrir_enlace, set_reg_dword
 from utils.state import AppState
@@ -9,42 +9,20 @@ from utils.state import AppState
 def load_frame_window(frame1, state: AppState):
     #frame1.pack_propagate(False)
 
-    # # Selector de servidor
+    # resolucion
     # Label(
     #     frame1,
+    #     text=TEXTS[state.lang.get()]["resolution"],
     #     bg="black",
     #     fg="white",
-    #     text="Servidor"
     # ).pack()
-    # server_var = StringVar(value="Online")
-
-    # server_combo = ttk.Combobox(
-    #     frame1,
-    #     textvariable=server_var,
-    #     values=list(SERVER_FILES.keys()),
-    #     state="readonly",
-    #     width=40,
-    # )
-    # server_combo.pack(pady=5)
-    # server_combo.set("Online")
-    # server_combo.textvariable = server_var #Refuerzo el valor de la variable porque dentro de funciones se pierde
-
-    
-
-    # resolucion
-    Label(
-        frame1,
-        text=TEXTS[state.lang.get()]["resolution"],
-        bg="black",
-        fg="white",
-    ).pack()
 
     resolution_combo = CTkComboBox(
         frame1,
         variable=state.resolution,
         values=list(RESOLUTION_MAP.keys()),
         state="readonly",
-        width=250,
+        width=components_width,
         border_color=primary_color,
         button_color=primary_color,
         command=state.save_resolution

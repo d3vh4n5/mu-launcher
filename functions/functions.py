@@ -90,5 +90,5 @@ def launch_game(server, windowed, resolution, audio, music, volume, lang):
         return
 
 def abrir_enlace(event):
-    url = "https://mu-front.vercel.app/register"
+    url = REGISTER_URL
     webbrowser.open(url)
