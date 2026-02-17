@@ -73,17 +73,20 @@ class App():
             anchor=tkinter.CENTER,
             fg_color=primary_color,
             state="disabled" if state.can_launch == False else "normal", # Lo habilitaremos una vez cargados los servidores
-            command=lambda: launch_game(
-                # server_var.get(),
-                "Online",
-                state.window_mode.get(),
-                state.resolution.get(),
-                state.audio.get(),
-                state.music.get(),
-                state.volume.get(),
-                state.lang.get()
-            ),
         )
+
+        btn.configure(command=lambda: launch_game(
+            # server_var.get(),
+            "Online",
+            state.window_mode.get(),
+            state.resolution.get(),
+            state.audio.get(),
+            state.music.get(),
+            state.volume.get(),
+            state.lang.get(),
+            btn,
+            root
+        ),)
 
         # -------- FRAMES -----------------------------
         frame_window= Frame(root, width=app_width, bg=bg_color)

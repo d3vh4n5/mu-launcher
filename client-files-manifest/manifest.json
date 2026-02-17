@@ -3,11 +3,6 @@
   "file_count": 4029,
   "files": [
     {
-      "path": "launcher.exe",
-      "size": 20032167,
-      "sha256": "c013ed291317a21d6109f526288a69d0783b533077e643a2932440ead9f2a364"
-    },
-    {
       "path": "Main.dll",
       "size": 1296896,
       "sha256": "be7c3ec98d6069183d58a8bbd67b8a798192f49f12585d3634348e5e65515a6a"
@@ -36,6 +31,11 @@
       "path": "ogg.dll",
       "size": 53248,
       "sha256": "e6a3deeebe9de112a9a0c0c456a15e7f6cbae0af5d859932bdc5ff1ad9cfa60e"
+    },
+    {
+      "path": "ServerInfo.sse",
+      "size": 555272,
+      "sha256": "47449552fc4a4c4af85d869c6ffa6997abb3240ea10917b51702040b2475c09f"
     },
     {
       "path": "vorbisfile.dll",

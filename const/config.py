@@ -1,7 +1,7 @@
 from pathlib import Path
 
 PROJECT_NAME="Mu Campana"
-VERSION="1.1.0"
+VERSION="1.2.2"
 REGISTER_URL= "https://mu-front.vercel.app/register"
 API_URL="http://localhost:3000"
 # =========================

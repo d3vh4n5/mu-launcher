@@ -1,3 +1,4 @@
+import time
 from tkinter import ttk, messagebox
 import shutil
 import subprocess
@@ -5,6 +6,7 @@ import winreg
 import webbrowser
 
 from const.config import *
+from const.texts import TEXTS
 
 # =========================
 # FUNCIONES
@@ -44,50 +46,36 @@ def set_reg_dword(var_name, var_value, reg_type = "REG_DWORD"):
         )
 
 
-def launch_game(server, windowed, resolution, audio, music, volume, lang):
-    set_reg_dword("WindowMode", windowed)
-    resolution_number = RESOLUTION_MAP[resolution]
-    set_reg_dword("Resolution", resolution_number)
-    set_reg_dword("SoundOnOff", audio)
-    set_reg_dword("MusicOnOff", music)
-    set_reg_dword("VolumeLevel", volume)
-    set_reg_dword("LangSelection", lang, "REG_SZ")
-    # Validaciones
-
-    # if server not in SERVER_FILES:
-    #     messagebox.showerror("Error", "Servidor inválido")
-    #     return
-
-    # src = SERVER_FILES[server]
-
-    # if not src.exists():
-    #     messagebox.showerror(
-    #         "Error",
-    #         f"No existe el archivo:\n{src}"
-    #     )
-    #     return
-
-    if not MAIN_EXE.exists():
-        messagebox.showerror(
-            "Error",
-            f"No se encontró main.exe en:\n{MU_PATH}"
-        )
-        return
-
-    # Copiar ServerInfo.sse
-    # try:
-    #     shutil.copy(src, DEST_SERVERINFO)
-    # except Exception as e:
-    #     messagebox.showerror("Error", f"Error copiando ServerInfo.sse\n{e}")
-    #     return
-
-
+def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_play, root):
+    btn_play.configure(state="disabled", text="Lanzando..") # Evitar múltiples clicks
+    root.update()
+    
     # Ejecutar MU
     try:
+        set_reg_dword("WindowMode", windowed)
+        resolution_number = RESOLUTION_MAP[resolution]
+        set_reg_dword("Resolution", resolution_number)
+        set_reg_dword("SoundOnOff", audio)
+        set_reg_dword("MusicOnOff", music)
+        set_reg_dword("VolumeLevel", volume)
+        set_reg_dword("LangSelection", lang, "REG_SZ")
+
+        # Validaciones
+        if not MAIN_EXE.exists():
+            messagebox.showerror(
+                "Error",
+                f"No se encontró main.exe en:\n{MU_PATH}"
+            )
+            return
         subprocess.Popen(str(MAIN_EXE), cwd=str(MU_PATH))
+
     except Exception as e:
         messagebox.showerror("Error", f"No se pudo ejecutar el juego\n{e}")
+
         return
+    finally:
+        #btn_play.configure(state="normal", text=TEXTS[lang]["play"])
+        root.after(2000, lambda: btn_play.configure(state="normal", text=TEXTS[lang]["play"]))
 
 def abrir_enlace(event):
     url = REGISTER_URL

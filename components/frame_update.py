@@ -45,7 +45,9 @@ def load_frame_update(frame1, state: AppState, btn_play):
         thread.start()
 
     def proceso_verificacion():
-        CLIENT_URL = API_URL + "/downloads/Mu99bClassic/Cliente/" # Donde subiste los archivos
+        btn_play.configure(state="disabled") # Evitar que juegue durante la actualización
+        btn_update.configure(state="disabled", text="Verificando...") # Evitar múltiples clicks
+        CLIENT_URL = API_URL + "/downloads/Mu99bClassic/Client/" # Donde subiste los archivos
         MANIFEST_URL = API_URL + "/downloads/Mu99bClassic/manifest.json" # Donde subiste los archivos
         
         # 1. Bajamos el manifest.json del servidor
@@ -93,6 +95,7 @@ def load_frame_update(frame1, state: AppState, btn_play):
 
         label_status.configure(text="¡Cliente actualizado! Ya podés jugar.")
         btn_play.configure(state="normal")
+        btn_update.configure(state="normal", text="Verificar y Actualizar Cliente")
 
     # Botón para iniciar la verificación/actualización
     btn_update = CTkButton(

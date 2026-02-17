@@ -21,6 +21,7 @@ EXCLUDE_DIRS = {
 EXCLUDE_FILES = {
     "manifest.json",
     "manifest.py",
+    "launcher.exe",
 }
 
 MANIFEST_VERSION = "1.0.0"
