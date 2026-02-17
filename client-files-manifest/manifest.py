@@ -6,12 +6,12 @@ import hashlib
 # CONFIGURACIÓN
 # =========================
 
-CLIENT_DIR = r"./build"   # carpeta raíz del cliente
+CLIENT_DIR = r"../../Client"   # carpeta raíz del cliente
 OUTPUT_MANIFEST = "manifest.json"
 
 EXCLUDE_DIRS = {
     "Logs",
-    "Screenshots",
+    "ScreenShots",
     "Temp",
     "Launcher",
     ".git",
@@ -19,7 +19,8 @@ EXCLUDE_DIRS = {
 }
 
 EXCLUDE_FILES = {
-    "manifest.json"
+    "manifest.json",
+    "manifest.py",
 }
 
 MANIFEST_VERSION = "1.0.0"

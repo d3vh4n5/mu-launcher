@@ -2,6 +2,7 @@ from tkinter import Tk, Label, Frame
 import tkinter
 import customtkinter as ctk
 from components.frame_lang import load_frame_lang
+from components.frame_update import load_frame_update
 from components.frame_window import load_frame_window
 from components.frame_audio import load_frame_audio
 from components.frame_server import load_frame_server
@@ -88,19 +89,24 @@ class App():
         frame_window= Frame(root, width=app_width, bg=bg_color)
         frame_audio = Frame(root, width=app_width, bg="#0A0A0A", pady=10)
         frame_idioma = Frame(root, bg=bg_color)
+        frame_server = Frame(root, bg=bg_color)
+        frame_update = Frame(root, bg=bg_color)
 
         frames = []
         frames.append(frame_window)
         frames.append(frame_audio)
         frames.append(frame_idioma)
+        frames.append(frame_server)
+        frames.append(frame_update)
 
         for frame in frames:
             frame.pack(fill="x", pady=10)
 
 
-        load_frame_window(frame_window, state)
-        load_frame_audio(frame_audio, state)
-        load_frame_server(frame_idioma, state, btn)
+        #load_frame_window(frame_window, state)
+        #load_frame_audio(frame_audio, state)
+        load_frame_server(frame_server, state, btn)
+        load_frame_update(frame_update, state, btn)
 
         #Aqc'a cargo el btn a la GUI
         btn.pack(pady=(10, 0))
