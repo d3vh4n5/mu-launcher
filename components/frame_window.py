@@ -10,12 +10,14 @@ def load_frame_window(frame1, state: AppState):
     #frame1.pack_propagate(False)
 
     # resolucion
-    # Label(
-    #     frame1,
-    #     text=TEXTS[state.lang.get()]["resolution"],
-    #     bg="black",
-    #     fg="white",
-    # ).pack()
+    Label(
+        frame1,
+        text=TEXTS[state.lang.get()]["resolution"],
+        bg="black",
+        fg="white",
+    ).pack()
+
+    print('resolucion actual: ' + state.resolution.get())
 
     resolution_combo = CTkComboBox(
         frame1,
@@ -29,6 +31,7 @@ def load_frame_window(frame1, state: AppState):
     )
     resolution_combo.pack(pady=5)
     resolution_combo.variable = state.resolution
+    resolution_combo.set(state.resolution.get())
 
     # Modo ventana
 

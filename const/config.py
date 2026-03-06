@@ -1,9 +1,14 @@
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 PROJECT_NAME="Mu Campana"
-VERSION="1.2.2"
+VERSION="1.2.3"
 REGISTER_URL= "https://mu-front.vercel.app/register"
-API_URL="http://localhost:3000"
+API_URL="http://93.127.142.139"
+API_KEY = os.getenv("API_KEY")
 # =========================
 # CONFIGURACIÓN
 # =========================

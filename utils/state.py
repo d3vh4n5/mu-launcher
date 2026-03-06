@@ -45,3 +45,6 @@ class AppState:
     
     def set_can_launch(self, value: bool):
         self.can_launch = value
+    
+    def save_all(self):
+        print("Guardando configuración...")

@@ -92,7 +92,8 @@ def load_frame_server(frame1, state: AppState, btn):
                     import time; time.sleep(0.05) 
 
                 # La descarga real
-                ServerService.download_and_replace_config(
+                server = ServerService()
+                server.download_and_replace_config(
                     API_URL,
                     current_server['fileUrl']
                 )

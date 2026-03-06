@@ -19,6 +19,7 @@ from utils.styles import style
 from const.colors import bg_color, primary_color
 from const.config import app_width,app_heigh, VERSION, components_width
 from const.texts import TEXTS
+from views.options_window import Options
 
 class App():
     def __init__(self):
@@ -65,17 +66,27 @@ class App():
             fg="white",
         ).pack(pady=10)
 
+        # xxxxxxxxxxxxxxxxx
         # Botón jugar
-        btn = ctk.CTkButton(
-            root,
-            text=TEXTS[state.lang.get()]["play"],
+        # xxxxxxxxxxxxxxxxx
+        btn_container = ctk.CTkFrame(root, fg_color="black")
+        
+
+        frame_btn_play = ctk.CTkFrame(btn_container, width=210, height=40, fg_color="black")
+        frame_btn_play.grid(row=0, column=0)
+        frame_btn_play.pack_propagate(False)
+        
+        btn_play = ctk.CTkButton(
+            frame_btn_play,
+            text=f"{TEXTS[state.lang.get()]['play']}     ",
+            height=40,
             width=components_width,
             anchor=tkinter.CENTER,
             fg_color=primary_color,
-            state="disabled" if state.can_launch == False else "normal", # Lo habilitaremos una vez cargados los servidores
+            state="normal" if state.can_launch == False else "normal", # Lo habilitaremos una vez cargados los servidores
         )
 
-        btn.configure(command=lambda: launch_game(
+        btn_play.configure(command=lambda: launch_game(
             # server_var.get(),
             "Online",
             state.window_mode.get(),
@@ -84,9 +95,29 @@ class App():
             state.music.get(),
             state.volume.get(),
             state.lang.get(),
-            btn,
+            btn_play,
             root
         ),)
+        btn_play.place(x=0, y=0)
+
+        # --- BOTÓN CONFIG (Lado Derecho) ---
+        # El frame mide 40, el botón 50. Al moverlo x=-10, ocultamos el redondeo izquierdo.
+        frame_btn_cfg = ctk.CTkFrame(btn_container, width=40, height=40, fg_color="transparent")
+        frame_btn_cfg.grid(row=0, column=1)
+        frame_btn_cfg.pack_propagate(False)
+
+        btn_cfg = ctk.CTkButton(
+            frame_btn_cfg, 
+            text="     ⚙️",
+            width=55, # Un poco más ancho para que sobre por la izquierda
+            height=40,
+            fg_color=primary_color,
+            anchor=tkinter.CENTER,
+            cursor="hand2",
+            command=lambda: Options(state) # Abrir ventana de opciones
+        )
+        # El truco: lo desplazamos a la izquierda para "esconder" su redondeo en el borde del frame
+        btn_cfg.place(x=-15, y=0) 
 
         # -------- FRAMES -----------------------------
         frame_window= Frame(root, width=app_width, bg=bg_color)
@@ -108,11 +139,12 @@ class App():
 
         #load_frame_window(frame_window, state)
         #load_frame_audio(frame_audio, state)
-        load_frame_server(frame_server, state, btn)
-        load_frame_update(frame_update, state, btn)
+        #load_frame_lang(frame_idioma, state)
+        load_frame_server(frame_server, state, btn_play)
+        load_frame_update(frame_update, state, btn_play)
 
         #Aqc'a cargo el btn a la GUI
-        btn.pack(pady=(10, 0))
+        btn_container.pack()
 
         # Enlace
         label = Label(root, text=TEXTS[state.lang.get()]["register"], fg="dodger blue", cursor="hand2", font=("Arial", 10))
