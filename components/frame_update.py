@@ -100,7 +100,7 @@ def load_frame_update(frame1, state: AppState, btn_play):
     # Botón para iniciar la verificación/actualización
     btn_update = CTkButton(
         frame1,
-        text="Verificar y Actualizar Cliente",
+        text="Verificar y Actualizar Cliente ⬇️⏬",
         width=components_width,
         fg_color=primary_color,
         command=iniciar_update

@@ -20,6 +20,10 @@ class AppState:
         self.lang = StringVar(
             value=val_reg if val_reg in ["Spn", "Eng", "Por"] else "Eng"
         )
+    
+    def set_lang(self, lang: StringVar):
+        print('Setting lang; ', lang.get())
+        self.lang = lang
 
     def save_window_mode(self):
         val= 1 if self.window_mode.get() else 0
