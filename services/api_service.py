@@ -1,5 +1,6 @@
 import requests
 from const.config import API_URL, API_KEY
+from utils.logger import logger
 import time
 
 class ServerService:
@@ -11,7 +12,6 @@ class ServerService:
         }
 
     def fetch_servers(self):
-
         try:
             response = requests.get(
                 f"{API_URL}/api/launcher/servers", 
@@ -21,7 +21,7 @@ class ServerService:
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            print("Error al obtener servidores:", e)
+            logger.error(f"Error al obtener servidores: {e}", exc_info=True)
             return []
     
     def download_and_replace_config(self, base_url, file_path_api, local_filename="ServerInfo.sse"):
@@ -30,7 +30,7 @@ class ServerService:
         base_url: ej. "http://localhost:3000"
         file_path_api: ej. "/downloads/Mu99bClassic/ServerInfo.sse"
         """
-        print(f"Descargando configuración desde {base_url}{file_path_api}...")
+        logger.info(f"Descargando configuración desde {base_url}{file_path_api}...")
         url = f"{base_url}{file_path_api}"
         
         try:
@@ -45,8 +45,8 @@ class ServerService:
             with open(local_filename, "wb") as f:
                 f.write(response.content)
             
-            print(f"Archivo {local_filename} actualizado con éxito.")
+            logger.info(f"Archivo {local_filename} actualizado con éxito.")
             return True
         except Exception as e:
-            print(f"Error al descargar configuración: {e}")
-            raise e # Re-lanzamos para que la UI sepa que falló
+            logger.error(f"Error al descargar configuración ({url}): {e}", exc_info=True)
+            raise e # Re-lanzamos para que la UI sepa que falló

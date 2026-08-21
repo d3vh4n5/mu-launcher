@@ -4,16 +4,18 @@ from const.colors import primary_color, primary_color_light
 from utils.state import AppState
 
 def load_frame_audio(frame_audio, state: AppState):
+    def get_txt(key, fallback=""):
+        return TEXTS.get(state.lang.get(), TEXTS["Spn"]).get(key, fallback)
+
     # En CTK, frame_audio ya debería ser un CTkFrame para que los colores coincidan
     frame_audio.pack_propagate(False)
     frame_audio.grid_columnconfigure(0, weight=1)
     frame_audio.grid_columnconfigure(1, weight=1)
 
-
     ### Audio On/Off (CheckButton -> CTkCheckBox)
     audio_check = ctk.CTkCheckBox(
         frame_audio,
-        text=TEXTS[state.lang.get()]["audio"],
+        text=get_txt("audio", "Sonido"),
         variable=state.audio,
         command=state.save_audio,
         checkbox_width=20,
@@ -26,7 +28,7 @@ def load_frame_audio(frame_audio, state: AppState):
     ### Music On/Off
     music_check = ctk.CTkCheckBox(
         frame_audio,
-        text=TEXTS[state.lang.get()]["music"],
+        text=get_txt("music", "Música"),
         variable=state.music,
         command=state.save_music,
         checkbox_width=20,
@@ -35,12 +37,11 @@ def load_frame_audio(frame_audio, state: AppState):
     )
     music_check.grid(row=0, column=1, sticky='e', padx=10, pady=0)
     music_check.variable = state.music
-    
 
     # Fila 1: Etiqueta de volumen (Label -> CTkLabel)
     label_vol = ctk.CTkLabel(
         frame_audio, 
-        text=TEXTS[state.lang.get()]["volume"], 
+        text=get_txt("volume", "Volumen"), 
         text_color="white", 
     )
     label_vol.grid(row=1, column=0, columnspan=2, pady=(10, 0))
@@ -60,3 +61,10 @@ def load_frame_audio(frame_audio, state: AppState):
         command=lambda v: state.save_volume(int(v))
     )
     volume_scale.grid(row=2, column=0, columnspan=2, sticky='n', pady=10)
+
+    def update_texts(*args):
+        audio_check.configure(text=get_txt("audio", "Sonido"))
+        music_check.configure(text=get_txt("music", "Música"))
+        label_vol.configure(text=get_txt("volume", "Volumen"))
+
+    state.lang.trace_add("write", update_texts)

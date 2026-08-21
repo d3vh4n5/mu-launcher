@@ -26,23 +26,25 @@ class AppState:
         self.lang = lang
 
     def save_window_mode(self):
-        val= 1 if self.window_mode.get() else 0
+        val = 1 if self.window_mode.get() else 0
         set_reg_dword("WindowMode", val)
         
-    def save_resolution(self, event):
-        val = RESOLUTION_MAP[self.resolution.get()]
+    def save_resolution(self, choice=None):
+        val = RESOLUTION_MAP.get(self.resolution.get(), 1)
         set_reg_dword("Resolution", val)
     
     def save_audio(self):
-        val= 1 if self.window_mode.get() else 0
+        val = 1 if self.audio.get() else 0
         set_reg_dword("SoundOnOff", val)
     
     def save_music(self):
-        val= 1 if self.window_mode.get() else 0
+        val = 1 if self.music.get() else 0
         set_reg_dword("MusicOnOff", val)
     
-    def save_volume(self, val:int):
-        set_reg_dword("VolumeLevel", val)
+    def save_volume(self, val: int = None):
+        if val is None:
+            val = self.volume.get()
+        set_reg_dword("VolumeLevel", int(val))
 
     def save_lang(self):
         set_reg_dword("LangSelection", self.lang.get(), "REG_SZ")
@@ -51,4 +53,10 @@ class AppState:
         self.can_launch = value
     
     def save_all(self):
-        print("Guardando configuración...")
+        print("Guardando configuración completa...")
+        self.save_window_mode()
+        self.save_resolution()
+        self.save_audio()
+        self.save_music()
+        self.save_volume()
+        self.save_lang()

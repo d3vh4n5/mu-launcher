@@ -114,7 +114,7 @@ class App():
             fg_color=primary_color,
             anchor=tkinter.CENTER,
             cursor="hand2",
-            command=lambda: Options(state) # Abrir ventana de opciones
+            command=lambda: Options(state, root) # Abrir ventana de opciones
         )
         # El truco: lo desplazamos a la izquierda para "esconder" su redondeo en el borde del frame
         btn_cfg.place(x=-15, y=0) 
@@ -152,12 +152,19 @@ class App():
         label.pack(pady=(10, 0))
         label.bind("<Button-1>", abrir_enlace)
 
-        version = Label(root, text=f"{TEXTS[state.lang.get()]["version"]}: {VERSION}", fg="white", font=("Courier New", 8))
+        version = Label(root, text=f"{TEXTS.get(state.lang.get(), TEXTS['Spn'])['version']}: {VERSION}", fg="white", font=("Courier New", 8))
         version.config(bg=bg_color, fg="#adadad", pady=10)
         version.pack(pady=(10, 0))
 
-        #root.update() # Forzar a la ventana a existir internamente
-        #pywinstyles.apply_style(root, "dark") # Aplica el estilo oscuro a la ventana (si es compatible)
+        def update_app_texts(*args):
+            lang = state.lang.get()
+            txts = TEXTS.get(lang, TEXTS["Spn"])
+            btn_play.configure(text=f"{txts.get('play', 'JUGAR')}     ")
+            label.config(text=txts.get("register", "Registrarse"))
+            version.config(text=f"{txts.get('version', 'Versión')}: {VERSION}")
+
+        state.lang.trace_add("write", update_app_texts)
+
         pywinstyles.change_header_color(root, "#000000")
         root.mainloop()
 

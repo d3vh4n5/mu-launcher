@@ -8,7 +8,18 @@ TEXTS = {
         "register": "Registrarse",
         "language": "Idioma",
         "volume": "Volumen",
-        "version": "Versión"
+        "version": "Versión",
+        "launching": "Lanzando...",
+        "verify_update_btn": "Verificar y Actualizar Cliente ⬇️⏬",
+        "verifying": "Verificando...",
+        "downloading": "Descargando",
+        "connecting_server": "Conectando con el servidor...",
+        "client_updated": "¡Cliente actualizado! Ya podés jugar.",
+        "status_ready": "Estado: Listo",
+        "connection_error": "Error de conexión con el servidor",
+        "error": "Error",
+        "save": "Guardar",
+        "options_title": "Opciones"
     },
     "Eng": {
         "resolution": "Resolution",
@@ -19,7 +30,18 @@ TEXTS = {
         "register": "Register Now",
         "language": "Language",
         "volume": "Volume",
-        "version": "Version"
+        "version": "Version",
+        "launching": "Launching...",
+        "verify_update_btn": "Verify and Update Client ⬇️⏬",
+        "verifying": "Verifying...",
+        "downloading": "Downloading",
+        "connecting_server": "Connecting to server...",
+        "client_updated": "Client updated! Ready to play.",
+        "status_ready": "Status: Ready",
+        "connection_error": "Server connection error",
+        "error": "Error",
+        "save": "Save",
+        "options_title": "Options"
     },
     "Por": {
         "volume": "Volume",
@@ -30,6 +52,17 @@ TEXTS = {
         "play": "JOGAR",
         "register": "Registrar-se",
         "language": "Idioma",
-        "version": "Versão"
+        "version": "Versão",
+        "launching": "Iniciando...",
+        "verify_update_btn": "Verificar e Atualizar Cliente ⬇️⏬",
+        "verifying": "Verificando...",
+        "downloading": "Baixando",
+        "connecting_server": "Conectando ao servidor...",
+        "client_updated": "Cliente atualizado! Pronto para jogar.",
+        "status_ready": "Status: Pronto",
+        "connection_error": "Erro de conexão com o servidor",
+        "error": "Erro",
+        "save": "Salvar",
+        "options_title": "Opções"
     }
 }

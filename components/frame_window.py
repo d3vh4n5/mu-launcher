@@ -7,17 +7,17 @@ from functions.functions import get_registry_value, abrir_enlace, set_reg_dword
 from utils.state import AppState
 
 def load_frame_window(frame1, state: AppState):
-    #frame1.pack_propagate(False)
+    def get_txt(key, fallback=""):
+        return TEXTS.get(state.lang.get(), TEXTS["Spn"]).get(key, fallback)
 
     # resolucion
-    Label(
+    lbl_res = Label(
         frame1,
-        text=TEXTS[state.lang.get()]["resolution"],
+        text=get_txt("resolution", "Resolución"),
         bg="black",
         fg="white",
-    ).pack()
-
-    print('resolucion actual: ' + state.resolution.get())
+    )
+    lbl_res.pack()
 
     resolution_combo = CTkComboBox(
         frame1,
@@ -34,10 +34,9 @@ def load_frame_window(frame1, state: AppState):
     resolution_combo.set(state.resolution.get())
 
     # Modo ventana
-
     check = CTkCheckBox(
         frame1,
-        text=TEXTS[state.lang.get()]["window_mode"],
+        text=get_txt("window_mode", "Modo Ventana"),
         variable=state.window_mode,
         command=state.save_window_mode,
         checkbox_width=20,
@@ -46,3 +45,9 @@ def load_frame_window(frame1, state: AppState):
     )
     check.pack(pady=10)
     check.variable = state.window_mode
+
+    def update_texts(*args):
+        lbl_res.config(text=get_txt("resolution", "Resolución"))
+        check.configure(text=get_txt("window_mode", "Modo Ventana"))
+
+    state.lang.trace_add("write", update_texts)

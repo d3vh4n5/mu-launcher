@@ -7,6 +7,7 @@ import webbrowser
 
 from const.config import *
 from const.texts import TEXTS
+from utils.logger import logger
 
 # =========================
 # FUNCIONES
@@ -40,6 +41,7 @@ def set_reg_dword(var_name, var_value, reg_type = "REG_DWORD"):
             var_value
         )
     except Exception as e:
+        logger.error(f"No se pudo escribir en el registro para {var_name}: {e}", exc_info=True)
         messagebox.showerror(
             "Error",
             f"No se pudo escribir en el registro\n{e}"
@@ -47,11 +49,13 @@ def set_reg_dword(var_name, var_value, reg_type = "REG_DWORD"):
 
 
 def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_play, root):
-    btn_play.configure(state="disabled", text="Lanzando..") # Evitar múltiples clicks
+    txt_launching = TEXTS.get(lang, TEXTS["Spn"]).get("launching", "Lanzando...")
+    btn_play.configure(state="disabled", text=txt_launching) # Evitar múltiples clicks
     root.update()
     
     # Ejecutar MU
     try:
+        logger.info(f"Lanzando el juego con configuración: Windowed={windowed}, Res={resolution}, Audio={audio}, Music={music}")
         set_reg_dword("WindowMode", windowed)
         resolution_number = RESOLUTION_MAP[resolution]
         set_reg_dword("Resolution", resolution_number)
@@ -62,19 +66,21 @@ def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_pl
 
         # Validaciones
         if not MAIN_EXE.exists():
+            logger.error(f"No se encontró main.exe en: {MU_PATH}")
             messagebox.showerror(
                 "Error",
                 f"No se encontró main.exe en:\n{MU_PATH}"
             )
             return
         subprocess.Popen(str(MAIN_EXE), cwd=str(MU_PATH))
+        logger.info("Juego iniciado correctamente (main.exe lanzado).")
 
     except Exception as e:
+        logger.error(f"No se pudo ejecutar el juego: {e}", exc_info=True)
         messagebox.showerror("Error", f"No se pudo ejecutar el juego\n{e}")
 
         return
     finally:
-        #btn_play.configure(state="normal", text=TEXTS[lang]["play"])
         root.after(2000, lambda: btn_play.configure(state="normal", text=TEXTS[lang]["play"]))
 
 def abrir_enlace(event):

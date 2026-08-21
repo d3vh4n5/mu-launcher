@@ -2,13 +2,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+BASE_DIR = Path.cwd()
+env_file = BASE_DIR / ".env"
+if env_file.exists():
+    load_dotenv(dotenv_path=env_file)
+else:
+    load_dotenv()
 
 PROJECT_NAME="Mu Campana"
 VERSION="1.2.3"
 REGISTER_URL= "https://mu-front.vercel.app/register"
 API_URL="http://93.127.142.139"
-API_KEY = os.getenv("API_KEY")
+API_KEY = "mu_api_65b97264a446ed101d57ba5120004e46ce6151f386ef4b95eff794438aa04b30" #Campiar por la api key al momento de compilar
 # =========================
 # CONFIGURACIÓN
 # =========================
