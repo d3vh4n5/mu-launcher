@@ -1,26 +1,142 @@
-from const.config import BASE_DIR
-from updater.process import force_close_launcher
-from updater.files import update_executable
-from updater.logger import log_message
+import os
+import sys
+import time
+import argparse
+import subprocess
+import threading
+from pathlib import Path
 
-def update():
-    # 1 - Ver que el proceso del launcher terminó
-    try:
-        # Lo mato o espero que termine? https://psutil.readthedocs.io/en/latest/#psutil.wait_procs
-        force_close_launcher('launcher.exe')
-    except Exception as e:
-        log_message(f"Error al intentar terminar el proceso: {e}")
-    # 2 - Verificar que el nuevo launcher esté en la carpeta de descargas
+# Asegurar que el directorio raíz esté en sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 
-    # 3 - Verificar que la descarga se completó (comparar hash)
-    # 4 - Reemplazar el launcher viejo por el nuevo
-    new_launcher_path = BASE_DIR / "data/launcher/launcher-1234.exe"
-    launcher_path = BASE_DIR / 'launcher.exe'
-    log_message(f"Reemplazando {launcher_path} por {new_launcher_path}...")
+import customtkinter as ctk
+from const.colors import bg_color, primary_color
+import psutil
 
-    update_executable(launcher_path, new_launcher_path)
+class UpdaterGUI(ctk.CTk):
+    def __init__(self, new_exe_path, target_exe_path, parent_pid=None):
+        super().__init__()
+
+        self.new_exe_path = Path(new_exe_path)
+        self.target_exe_path = Path(target_exe_path)
+        self.parent_pid = parent_pid
+
+        # Configuración de ventana
+        ctk.set_appearance_mode("dark")
+        self.title("Actualizador de Mu Launcher")
+        self.geometry("340x190")
+        self.resizable(False, False)
+        self.configure(fg_color=bg_color)
+        self.attributes("-alpha", 0.95)
+
+        # Centrar ventana
+        try:
+            self.eval('tk::PlaceWindow . center')
+        except Exception:
+            pass
+
+        # Titulo
+        self.lbl_title = ctk.CTkLabel(
+            self,
+            text="Actualizando Launcher",
+            font=("Arial", 14, "bold"),
+            text_color="white"
+        )
+        self.lbl_title.pack(pady=(20, 5))
+
+        # Subtitulo de estado
+        self.lbl_status = ctk.CTkLabel(
+            self,
+            text="Iniciando proceso de actualización...",
+            font=("Arial", 11),
+            text_color="#adadad"
+        )
+        self.lbl_status.pack(pady=5)
+
+        # Barra de progreso
+        self.progress_bar = ctk.CTkProgressBar(
+            self,
+            width=280,
+            progress_color=primary_color,
+            mode="determinate"
+        )
+        self.progress_bar.set(0)
+        self.progress_bar.pack(pady=15)
+
+        # Hilo de ejecución
+        self.thread = threading.Thread(target=self.run_update_process, daemon=True)
+        self.after(500, self.thread.start)
+
+    def set_status(self, text, progress=None):
+        def _update():
+            self.lbl_status.configure(text=text)
+            if progress is not None:
+                self.progress_bar.set(progress)
+        self.after(0, _update)
+
+    def run_update_process(self):
+        try:
+            # 1. Esperar cierre del proceso principal si se pasó PID
+            if self.parent_pid:
+                self.set_status("Esperando cierre del launcher...", 0.2)
+                try:
+                    proc = psutil.Process(int(self.parent_pid))
+                    proc.wait(timeout=8)
+                except (psutil.NoSuchProcess, Exception):
+                    pass
+            time.sleep(0.8)
+
+            # 2. Forzar liberación si queda algún proceso remanente
+            self.set_status("Verificando procesos del launcher...", 0.4)
+            from updater.process import force_close_launcher
+            force_close_launcher(self.target_exe_path.name)
+            time.sleep(0.5)
+
+            # 3. Reemplazar ejecutable
+            self.set_status("Aplicando la nueva versión...", 0.7)
+            from updater.files import update_executable
+
+            if not self.new_exe_path.exists():
+                raise FileNotFoundError(f"No se encontró el ejecutable nuevo en:\n{self.new_exe_path}")
+
+            success = update_executable(self.target_exe_path, self.new_exe_path)
+            if not success:
+                raise RuntimeError("No se pudo reemplazar el ejecutable del launcher.")
+
+            # 4. Finalizado exitoso
+            self.set_status("¡Actualización completada! Reabriendo...", 1.0)
+            time.sleep(1.2)
+
+            # 5. Iniciar la nueva versión
+            if self.target_exe_path.exists():
+                subprocess.Popen(str(self.target_exe_path), cwd=str(self.target_exe_path.parent))
+
+        except Exception as e:
+            self.set_status(f"Error: {e}", 0)
+            time.sleep(3.5)
+        finally:
+            self.after(0, self.destroy)
 
 
-    #--- Para desarrollo ---
-    log_message("Actualización completada con éxito.")
-    input("Presiona Enter para cerrar esta ventana...")
+def start_updater_gui(new_exe, target_exe, pid=None):
+    app = UpdaterGUI(new_exe_path=new_exe, target_exe_path=target_exe, parent_pid=pid)
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Actualizador del Launcher de Mu")
+    parser.add_argument("--new-exe", type=str, help="Ruta al nuevo ejecutable descargado")
+    parser.add_argument("--target-exe", type=str, help="Ruta al ejecutable launcher.exe a reemplazar")
+    parser.add_argument("--pid", type=int, help="PID del proceso launcher a esperar")
+
+    args = parser.parse_args()
+
+    default_new = BASE_DIR / "data" / "launcher" / "launcher-new.exe"
+    default_target = BASE_DIR / "launcher.exe"
+
+    new_exe_arg = args.new_exe or str(default_new)
+    target_exe_arg = args.target_exe or str(default_target)
+
+    start_updater_gui(new_exe_arg, target_exe_arg, args.pid)

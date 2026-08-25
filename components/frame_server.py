@@ -1,7 +1,7 @@
 from tkinter import StringVar, Label
 from customtkinter import CTkComboBox, CTkProgressBar
 from const.colors import *
-from const.config import API_URL, components_width
+from const.config import MU_SERVER_URL, components_width
 from const.texts import TEXTS
 from utils.state import AppState
 from services.api_service import ServerService
@@ -94,7 +94,7 @@ def load_frame_server(frame1, state: AppState, btn):
                 # La descarga real
                 server = ServerService()
                 server.download_and_replace_config(
-                    API_URL,
+                    MU_SERVER_URL,
                     current_server['fileUrl']
                 )
 

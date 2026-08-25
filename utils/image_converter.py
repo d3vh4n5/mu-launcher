@@ -41,10 +41,10 @@ def convertir_imagen_a_py(archivo_entrada, nombre_variable, archivo_salida='imag
 if __name__ == "__main__":
     # --- USO ---
     # Ejemplo si tienes un archivo "fondo_launcher.png" y quieres que se llame BACKGROUND_IMAGE_BASE64
-    convertir_imagen_a_py('fondo_launcher.png', 'BACKGROUND_IMAGE_BASE64', 'imagenes_launcher_data.py')
+    # convertir_imagen_a_py('fondo_launcher.png', 'BACKGROUND_IMAGE_BASE64', 'imagenes_launcher_data.py')
 
     # Si tienes otra imagen, por ejemplo, un logo "logo_mu.png"
-    convertir_imagen_a_py('logo_mu.jpg', 'LOGO_MU_BASE64', 'imagenes_launcher_data.py')
+    convertir_imagen_a_py('hero2.jpg', 'HERO_IMG', 'hero.py')
 
     # Si quieres volver a generar el archivo desde cero, cambia 'a' por 'w' en la línea 17
     # o borra 'imagenes_launcher_data.py' antes de correr el script.

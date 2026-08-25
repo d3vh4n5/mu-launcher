@@ -17,12 +17,12 @@ import pywinstyles
 from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color, primary_color
-from const.config import app_width,app_heigh, VERSION, components_width
+from const.config import app_width,app_heigh, VERSION, components_width, REGISTER_URL
 from const.texts import TEXTS
 from views.options_window import Options
 
 class App():
-    def __init__(self):
+    def __init__(self, register_url=None):
         # =========================
         # UI
         # =========================
@@ -150,7 +150,10 @@ class App():
         label = Label(root, text=TEXTS[state.lang.get()]["register"], fg="dodger blue", cursor="hand2", font=("Arial", 10))
         label.config(bg=bg_color, pady=10)
         label.pack(pady=(10, 0))
-        label.bind("<Button-1>", abrir_enlace)
+        label.bind(
+            "<Button-1>",
+            lambda event: abrir_enlace(event, register_url or REGISTER_URL)
+        )
 
         version = Label(root, text=f"{TEXTS.get(state.lang.get(), TEXTS['Spn'])['version']}: {VERSION}", fg="white", font=("Courier New", 8))
         version.config(bg=bg_color, fg="#adadad", pady=10)

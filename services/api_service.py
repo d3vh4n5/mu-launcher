@@ -14,8 +14,8 @@ class ServerService:
     def fetch_servers(self):
         try:
             response = requests.get(
-                f"{API_URL}/api/launcher/servers", 
-                headers=self.headers, 
+                f"{API_URL}/api/v2/launcher/servers",
+                headers=self.headers,
                 timeout=10
             )
             response.raise_for_status()
@@ -49,4 +49,4 @@ class ServerService:
             return True
         except Exception as e:
             logger.error(f"Error al descargar configuración ({url}): {e}", exc_info=True)
-            raise e # Re-lanzamos para que la UI sepa que falló
+            raise e # Re-lanzamos para que la UI sepa que falló

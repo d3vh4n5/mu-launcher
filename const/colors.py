@@ -1,6 +1,6 @@
 bg_color="#000000"
-fg="#E1F8F7"
-primary_color = '#3257a8'
-primary_color_light = "#2367a6"
-primary_color_dark = '#094233'
-accent_color = "#3257a8"
+fg="#6d22f8"
+primary_color = '#592bad'
+primary_color_light = "#6931d1"
+primary_color_dark = "#41217c"
+accent_color = "#6d22f8"

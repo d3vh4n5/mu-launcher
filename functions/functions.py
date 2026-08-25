@@ -83,6 +83,6 @@ def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_pl
     finally:
         root.after(2000, lambda: btn_play.configure(state="normal", text=TEXTS[lang]["play"]))
 
-def abrir_enlace(event):
-    url = REGISTER_URL
+def abrir_enlace(event, register_url=None):
+    url = register_url or REGISTER_URL
     webbrowser.open(url)

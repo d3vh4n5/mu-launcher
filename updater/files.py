@@ -20,23 +20,37 @@ def file_exists(file_path):
 # --- Lógica de reemplazo ---
 def update_executable(old_path, new_path):
     try:
-        # Convertimos a objeto Path si no lo son (por seguridad)
         import pathlib
+        import time
+
         old_path = pathlib.Path(old_path)
         new_path = pathlib.Path(new_path)
 
-        # 1. Crear la ruta del backup: launcher.exe -> launcher.exe.bak
         temp_old = old_path.with_suffix(old_path.suffix + ".bak")
-        
-        # 2. Renombrar el viejo a .bak
-        if old_path.exists():
-            if temp_old.exists():
-                temp_old.unlink() # Esto es como os.remove() en pathlib
-            old_path.rename(temp_old)
-        
-        # 3. Mover el nuevo al lugar del original
+
+        # Intentar varias veces por si Windows tarda un segundo en liberar el archivo
+        for attempt in range(5):
+            try:
+                if old_path.exists():
+                    if temp_old.exists():
+                        temp_old.unlink()
+                    old_path.rename(temp_old)
+                break
+            except Exception as e:
+                if attempt == 4:
+                    raise e
+                time.sleep(0.5)
+
+        # Mover el nuevo al lugar del original
         new_path.rename(old_path)
-        
+
+        # Limpiar backup de forma silenciosa si existe
+        if temp_old.exists():
+            try:
+                temp_old.unlink()
+            except Exception:
+                pass
+
         print("Actualización exitosa.")
         return True
     except Exception as e:

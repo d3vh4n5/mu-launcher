@@ -2,7 +2,7 @@ import hashlib
 from tkinter import StringVar, Label
 from customtkinter import CTkComboBox, CTkProgressBar, CTkButton, CTkLabel
 from const.colors import *
-from const.config import API_URL, API_KEY, components_width
+from const.config import MU_SERVER_URL, API_KEY, components_width
 from const.texts import TEXTS
 from utils.state import AppState
 from utils.logger import logger
@@ -61,8 +61,8 @@ def load_frame_update(frame1, state: AppState, btn_play):
             "x-api-key": API_KEY
         }
 
-        CLIENT_URL = API_URL + "/downloads/Mu99bClassic/Client/"
-        MANIFEST_URL = API_URL + "/downloads/Mu99bClassic/manifest.json"
+        CLIENT_URL = MU_SERVER_URL + "/downloads/Mu99bClassic/Client/"
+        MANIFEST_URL = MU_SERVER_URL + "/downloads/Mu99bClassic/manifest.json"
         
         try:
             update_ui_status(get_txt("connecting_server", "Conectando con el servidor..."), 0)
