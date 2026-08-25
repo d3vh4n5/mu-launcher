@@ -3,15 +3,23 @@ import sys
 import json
 import hashlib
 import threading
+import base64
 from pathlib import Path
 from tkinter import filedialog
 
+# Permite ejecutar este archivo directamente desde client-tools o desde otra carpeta.
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 import customtkinter as ctk
 
-# Colores de la app
-primary_color = "#1f538d"
-primary_color_light = "#2980b9"
-bg_color = "#0f0f0f"
+from assets.icono_data import ICONO_BASE64
+from const.colors import bg_color, primary_color, primary_color_light
+
+INPUT_COLOR = "#0A0A0A"
+SURFACE_COLOR = "#111111"
+TEXT_MUTED_COLOR = "#ADADAD"
 
 class ClientToolsApp(ctk.CTk):
     def __init__(self):
@@ -19,12 +27,23 @@ class ClientToolsApp(ctk.CTk):
 
         ctk.set_appearance_mode("dark")
         self.title("Herramientas de Cliente MU")
-        self.geometry("520x480")
+        self.geometry("560x700")
         self.resizable(False, False)
         self.configure(fg_color=bg_color)
+        self._set_icon()
 
         # Tabview para las 2 herramientas
-        self.tabview = ctk.CTkTabview(self, width=490, height=440)
+        self.tabview = ctk.CTkTabview(
+            self,
+            width=490,
+            height=440,
+            fg_color=SURFACE_COLOR,
+            segmented_button_fg_color=INPUT_COLOR,
+            segmented_button_selected_color=primary_color,
+            segmented_button_selected_hover_color=primary_color_light,
+            segmented_button_unselected_color=INPUT_COLOR,
+            segmented_button_unselected_hover_color=primary_color_light,
+        )
         self.tabview.pack(padx=15, pady=10, fill="both", expand=True)
 
         self.tab_manifest = self.tabview.add("Generador Manifest")
@@ -32,6 +51,15 @@ class ClientToolsApp(ctk.CTk):
 
         self.setup_manifest_tab()
         self.setup_patcher_tab()
+
+    def _set_icon(self):
+        try:
+            icon_path = Path.cwd() / "data" / "temp" / "client_tools_icon.ico"
+            icon_path.parent.mkdir(parents=True, exist_ok=True)
+            icon_path.write_bytes(base64.b64decode(ICONO_BASE64))
+            self.iconbitmap(str(icon_path))
+        except Exception:
+            pass
 
     # ==========================================
     # TAB 1: GENERADOR DE MANIFEST
@@ -46,12 +74,16 @@ class ClientToolsApp(ctk.CTk):
         frame_dir = ctk.CTkFrame(tab, fg_color="transparent")
         frame_dir.pack(fill="x", padx=10, pady=2)
 
-        self.entry_client_dir = ctk.CTkEntry(frame_dir, width=350)
+        self.entry_client_dir = ctk.CTkEntry(
+            frame_dir, width=350, fg_color=INPUT_COLOR, border_color=primary_color,
+            text_color="white"
+        )
         self.entry_client_dir.pack(side="left", fill="x", expand=True, padx=(0, 5))
         self.entry_client_dir.insert(0, os.getcwd())
 
         btn_browse_dir = ctk.CTkButton(
-            frame_dir, text="Examinar", width=80, command=self.browse_client_dir
+            frame_dir, text="Examinar", width=80, fg_color=primary_color,
+            hover_color=primary_color_light, command=self.browse_client_dir
         )
         btn_browse_dir.pack(side="right")
 
@@ -62,17 +94,106 @@ class ClientToolsApp(ctk.CTk):
         lbl_ver = ctk.CTkLabel(frame_version, text="Versión Manifest:", font=("Arial", 11))
         lbl_ver.pack(side="left", padx=(0, 10))
 
-        self.entry_manifest_ver = ctk.CTkEntry(frame_version, width=100)
+        self.entry_manifest_ver = ctk.CTkEntry(
+            frame_version, width=100, fg_color=INPUT_COLOR, border_color=primary_color,
+            text_color="white"
+        )
         self.entry_manifest_ver.pack(side="left")
         self.entry_manifest_ver.insert(0, "1.0.0")
 
+        self.exclude_dirs = {
+            "Logs": ctk.BooleanVar(value=True),
+            "ScreenShots": ctk.BooleanVar(value=True),
+            "Temp": ctk.BooleanVar(value=True),
+            "Launcher": ctk.BooleanVar(value=True),
+            ".git": ctk.BooleanVar(value=True),
+            "__pycache__": ctk.BooleanVar(value=True),
+        }
+        self.exclude_files = {
+            "manifest.json": ctk.BooleanVar(value=True),
+            "manifest.py": ctk.BooleanVar(value=True),
+            "tool.py": ctk.BooleanVar(value=True),
+            "tool.exe": ctk.BooleanVar(value=True),
+        }
+
+        exclusions_frame = ctk.CTkFrame(tab, fg_color=SURFACE_COLOR, corner_radius=6)
+        exclusions_frame.pack(fill="both", expand=True, padx=10, pady=(8, 2))
+
+        ctk.CTkLabel(
+            exclusions_frame,
+            text="Exclusiones del manifest",
+            font=("Arial", 12, "bold"),
+        ).pack(anchor="w", padx=10, pady=(8, 2))
+        ctk.CTkLabel(
+            exclusions_frame,
+            text="Marcadas = se ignoran al escanear",
+            text_color=TEXT_MUTED_COLOR,
+            font=("Arial", 10),
+        ).pack(anchor="w", padx=10, pady=(0, 5))
+
+        checks_frame = ctk.CTkScrollableFrame(
+            exclusions_frame, height=180, fg_color=INPUT_COLOR
+        )
+        checks_frame.pack(fill="both", expand=True, padx=8, pady=5)
+        self.exclusion_checks_frame = checks_frame
+
+        ctk.CTkLabel(checks_frame, text="Directorios", font=("Arial", 11, "bold")).pack(
+            anchor="w", padx=4, pady=(2, 0)
+        )
+        for name, variable in self.exclude_dirs.items():
+            ctk.CTkCheckBox(
+                checks_frame, text=name, variable=variable,
+                fg_color=primary_color, hover_color=primary_color_light,
+                border_color=primary_color,
+            ).pack(
+                anchor="w", padx=8, pady=2
+            )
+
+        ctk.CTkLabel(checks_frame, text="Archivos", font=("Arial", 11, "bold")).pack(
+            anchor="w", padx=4, pady=(8, 0)
+        )
+        for name, variable in self.exclude_files.items():
+            ctk.CTkCheckBox(
+                checks_frame, text=name, variable=variable,
+                fg_color=primary_color, hover_color=primary_color_light,
+                border_color=primary_color,
+            ).pack(
+                anchor="w", padx=8, pady=2
+            )
+
+        custom_frame = ctk.CTkFrame(exclusions_frame, fg_color="transparent")
+        custom_frame.pack(fill="x", padx=10, pady=(4, 8))
+        self.entry_exclude_dir = ctk.CTkEntry(
+            custom_frame, placeholder_text="Nuevo directorio", fg_color=INPUT_COLOR,
+            border_color=primary_color, text_color="white"
+        )
+        self.entry_exclude_dir.pack(side="left", fill="x", expand=True, padx=(0, 4))
+        ctk.CTkButton(
+            custom_frame, text="+ Directorio", width=105, fg_color=primary_color,
+            hover_color=primary_color_light, command=self.add_exclude_dir
+        ).pack(side="right")
+
+        custom_file_frame = ctk.CTkFrame(exclusions_frame, fg_color="transparent")
+        custom_file_frame.pack(fill="x", padx=10, pady=(0, 8))
+        self.entry_exclude_file = ctk.CTkEntry(
+            custom_file_frame, placeholder_text="Nuevo archivo", fg_color=INPUT_COLOR,
+            border_color=primary_color, text_color="white"
+        )
+        self.entry_exclude_file.pack(side="left", fill="x", expand=True, padx=(0, 4))
+        ctk.CTkButton(
+            custom_file_frame, text="+ Archivo", width=105, fg_color=primary_color,
+            hover_color=primary_color_light, command=self.add_exclude_file
+        ).pack(side="right")
+
         # Progreso y Estado
         self.lbl_manifest_status = ctk.CTkLabel(
-            tab, text="Listo para generar manifest.json", text_color="#adadad"
+            tab, text="Listo para generar manifest.json", text_color=TEXT_MUTED_COLOR
         )
         self.lbl_manifest_status.pack(padx=10, pady=(10, 2))
 
-        self.progress_manifest = ctk.CTkProgressBar(tab, width=440, progress_color=primary_color)
+        self.progress_manifest = ctk.CTkProgressBar(
+            tab, width=440, fg_color=INPUT_COLOR, progress_color=primary_color
+        )
         self.progress_manifest.set(0)
         self.progress_manifest.pack(padx=10, pady=5)
 
@@ -96,6 +217,36 @@ class ClientToolsApp(ctk.CTk):
     def start_generate_manifest(self):
         threading.Thread(target=self._generate_manifest_worker, daemon=True).start()
 
+    def add_exclude_dir(self):
+        name = self.entry_exclude_dir.get().strip()
+        existing_dirs = {item.casefold() for item in self.exclude_dirs}
+        if name and name.casefold() not in existing_dirs:
+            self.exclude_dirs[name] = ctk.BooleanVar(value=True)
+            ctk.CTkCheckBox(
+                self.exclusion_checks_frame,
+                text=name,
+                variable=self.exclude_dirs[name],
+                fg_color=primary_color,
+                hover_color=primary_color_light,
+                border_color=primary_color,
+            ).pack(anchor="w", padx=8, pady=2)
+            self.entry_exclude_dir.delete(0, "end")
+
+    def add_exclude_file(self):
+        name = self.entry_exclude_file.get().strip()
+        existing_files = {item.casefold() for item in self.exclude_files}
+        if name and name.casefold() not in existing_files:
+            self.exclude_files[name] = ctk.BooleanVar(value=True)
+            ctk.CTkCheckBox(
+                self.exclusion_checks_frame,
+                text=name,
+                variable=self.exclude_files[name],
+                fg_color=primary_color,
+                hover_color=primary_color_light,
+                border_color=primary_color,
+            ).pack(anchor="w", padx=8, pady=2)
+            self.entry_exclude_file.delete(0, "end")
+
     def _generate_manifest_worker(self):
         client_dir = self.entry_client_dir.get().strip()
         manifest_version = self.entry_manifest_ver.get().strip() or "1.0.0"
@@ -107,16 +258,20 @@ class ClientToolsApp(ctk.CTk):
         self.btn_gen_manifest.configure(state="disabled")
         self.update_manifest_status("Escaneando archivos...", 0.1)
 
-        exclude_dirs = {"Logs", "ScreenShots", "Temp", "Launcher", ".git", "__pycache__"}
-        exclude_files = {"manifest.json", "manifest.py", "tool.exe"}
+        exclude_dirs = {
+            name.casefold() for name, variable in self.exclude_dirs.items() if variable.get()
+        }
+        exclude_files = {
+            name.casefold() for name, variable in self.exclude_files.items() if variable.get()
+        }
 
         files_manifest = []
         all_files = []
 
         for root, dirs, files in os.walk(client_dir):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+            dirs[:] = [d for d in dirs if d.casefold() not in exclude_dirs]
             for f in files:
-                if f not in exclude_files:
+                if f.casefold() not in exclude_files:
                     all_files.append(os.path.join(root, f))
 
         total_files = len(all_files)
@@ -182,7 +337,7 @@ class ClientToolsApp(ctk.CTk):
         lbl_info = ctk.CTkLabel(
             tab,
             text="Reemplaza el nombre del servidor en archivos Text_*.bmd",
-            font=("Arial", 11), text_color="#adadad"
+            font=("Arial", 11), text_color=TEXT_MUTED_COLOR
         )
         lbl_info.pack(anchor="w", padx=10, pady=(10, 5))
 
@@ -190,7 +345,10 @@ class ClientToolsApp(ctk.CTk):
         lbl_old = ctk.CTkLabel(tab, text="Texto original a buscar:", font=("Arial", 12, "bold"))
         lbl_old.pack(anchor="w", padx=10, pady=(5, 2))
 
-        self.entry_old_str = ctk.CTkEntry(tab, width=440)
+        self.entry_old_str = ctk.CTkEntry(
+            tab, width=440, fg_color=INPUT_COLOR, border_color=primary_color,
+            text_color="white"
+        )
         self.entry_old_str.pack(padx=10, pady=2)
         self.entry_old_str.insert(0, "SSeMU")
 
@@ -198,7 +356,10 @@ class ClientToolsApp(ctk.CTk):
         lbl_new = ctk.CTkLabel(tab, text="Nuevo nombre del servidor:", font=("Arial", 12, "bold"))
         lbl_new.pack(anchor="w", padx=10, pady=(10, 2))
 
-        self.entry_new_str = ctk.CTkEntry(tab, width=440)
+        self.entry_new_str = ctk.CTkEntry(
+            tab, width=440, fg_color=INPUT_COLOR, border_color=primary_color,
+            text_color="white"
+        )
         self.entry_new_str.pack(padx=10, pady=2)
         self.entry_new_str.insert(0, "Mu Campana")
 
@@ -209,18 +370,22 @@ class ClientToolsApp(ctk.CTk):
         frame_bmd = ctk.CTkFrame(tab, fg_color="transparent")
         frame_bmd.pack(fill="x", padx=10, pady=2)
 
-        self.entry_bmd_dir = ctk.CTkEntry(frame_bmd, width=350)
+        self.entry_bmd_dir = ctk.CTkEntry(
+            frame_bmd, width=350, fg_color=INPUT_COLOR, border_color=primary_color,
+            text_color="white"
+        )
         self.entry_bmd_dir.pack(side="left", fill="x", expand=True, padx=(0, 5))
         self.entry_bmd_dir.insert(0, os.getcwd())
 
         btn_browse_bmd = ctk.CTkButton(
-            frame_bmd, text="Examinar", width=80, command=self.browse_bmd_dir
+            frame_bmd, text="Examinar", width=80, fg_color=primary_color,
+            hover_color=primary_color_light, command=self.browse_bmd_dir
         )
         btn_browse_bmd.pack(side="right")
 
         # Estado del parcheador
         self.lbl_patcher_status = ctk.CTkLabel(
-            tab, text="Listo para aplicar parche.", text_color="#adadad"
+            tab, text="Listo para aplicar parche.", text_color=TEXT_MUTED_COLOR
         )
         self.lbl_patcher_status.pack(padx=10, pady=(10, 5))
 

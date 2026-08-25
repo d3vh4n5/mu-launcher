@@ -4,7 +4,7 @@ pyinstaller --noconfirm --onefile --windowed --uac-admin --manifest "app.manifes
 
 pyinstaller --noconfirm --onefile --windowed --uac-admin --icon=icon.ico updater/updater.py
 
-pyinstaller --noconfirm --onefile --windowed --icon=icon.ico client-tools/tool.py
+pyinstaller --noconfirm --onefile --windowed --name tool --icon=icon.ico client-tools/tool.py
 
 
 # 🚀 Mu Launcher & Client Tools
@@ -30,7 +30,7 @@ pyinstaller --noconfirm --onefile --windowed --uac-admin --icon=icon.ico updater
 
 ### 🔹 Client Tools (`tool.exe`)
 ```bash
-pyinstaller --noconfirm --onefile --windowed --icon=icon.ico client-tools/tool.py
+pyinstaller --noconfirm --onefile --windowed --name tool --icon=icon.ico client-tools/tool.py
 ```
 
 ---

@@ -63,7 +63,11 @@ class StartupWindow:
     def update_progress(self, message, progress=None):
         def update_ui():
             self.status_label.configure(text=message)
-            if progress is not None:
+            if progress is None:
+                self.progress_bar.stop()
+                self.progress_bar.configure(mode="indeterminate")
+                self.progress_bar.start()
+            else:
                 self.progress_bar.stop()
                 self.progress_bar.configure(mode="determinate")
                 self.progress_bar.set(progress)
@@ -92,6 +96,7 @@ class StartupWindow:
             trigger_launcher_update(
                 Path(new_launcher_path),
                 Path(launcher_info["_current_exe"]),
+                Path(launcher_info["_updater_path"]) if launcher_info.get("_updater_path") else None,
             )
             return
 

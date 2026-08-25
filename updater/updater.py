@@ -1,3 +1,4 @@
+import base64
 import os
 import sys
 import time
@@ -12,6 +13,7 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 import customtkinter as ctk
+from assets.icono_data import ICONO_BASE64
 from const.colors import bg_color, primary_color
 import psutil
 
@@ -29,7 +31,8 @@ class UpdaterGUI(ctk.CTk):
         self.geometry("340x190")
         self.resizable(False, False)
         self.configure(fg_color=bg_color)
-        self.attributes("-alpha", 0.95)
+        self.attributes("-alpha", 0.9)
+        self._set_icon()
 
         # Centrar ventana
         try:
@@ -41,19 +44,19 @@ class UpdaterGUI(ctk.CTk):
         self.lbl_title = ctk.CTkLabel(
             self,
             text="Actualizando Launcher",
-            font=("Arial", 14, "bold"),
-            text_color="white"
+            font=("Arial", 15, "bold"),
+            text_color="white",
         )
-        self.lbl_title.pack(pady=(20, 5))
+        self.lbl_title.pack(pady=(22, 4))
 
         # Subtitulo de estado
         self.lbl_status = ctk.CTkLabel(
             self,
             text="Iniciando proceso de actualización...",
-            font=("Arial", 11),
-            text_color="#adadad"
+            font=("Arial", 10),
+            text_color="#ADADAD",
         )
-        self.lbl_status.pack(pady=5)
+        self.lbl_status.pack(pady=(0, 8))
 
         # Barra de progreso
         self.progress_bar = ctk.CTkProgressBar(
@@ -63,11 +66,20 @@ class UpdaterGUI(ctk.CTk):
             mode="determinate"
         )
         self.progress_bar.set(0)
-        self.progress_bar.pack(pady=15)
+        self.progress_bar.pack(pady=5)
 
         # Hilo de ejecución
         self.thread = threading.Thread(target=self.run_update_process, daemon=True)
         self.after(500, self.thread.start)
+
+    def _set_icon(self):
+        try:
+            icon_path = BASE_DIR / "data" / "temp" / "updater_icon.ico"
+            icon_path.parent.mkdir(parents=True, exist_ok=True)
+            icon_path.write_bytes(base64.b64decode(ICONO_BASE64))
+            self.iconbitmap(str(icon_path))
+        except Exception as error:
+            print(f"No se pudo cargar el icono del updater: {error}")
 
     def set_status(self, text, progress=None):
         def _update():
