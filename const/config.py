@@ -10,11 +10,11 @@ else:
     load_dotenv()
 
 PROJECT_NAME="Mu Campana"
-VERSION="1.2.4"
+VERSION="1.2.5"
 REGISTER_URL= "https://mu-front.vercel.app/register"
-MU_SERVER_URL= "http://93.127.142.139"
-API_URL= "http://localhost:3000"
-API_KEY = "mu_api_65b97264a446ed101d57ba5120004e46ce6151f386ef4b95eff794438aa04b30"
+MU_SERVER_URL= os.getenv("MU_SERVER_URL")
+API_URL= os.getenv("API_URL")
+API_KEY = os.getenv("API_KEY") #Campiar por la api key al momento de compilar
 # =========================
 # CONFIGURACIÓN
 # =========================
