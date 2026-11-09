@@ -4,10 +4,8 @@ import customtkinter as ctk
 from components.frame_lang import load_frame_lang
 from components.frame_window import load_frame_window
 from components.frame_audio import load_frame_audio
-import base64
-import os
-from assets.icono_data import ICONO_BASE64
 import pywinstyles
+from utils.window_icon import set_window_icon
 from utils.state import AppState
 from utils.styles import style
 from const.colors import bg_color, primary_color
@@ -37,13 +35,8 @@ class Options(ctk.CTkToplevel):
             self.transient(parent)
             self.grab_set()
 
-        try:
-            img_icon_data = base64.b64decode(ICONO_BASE64)
-            with open("temp_icon_opt.ico", "wb") as tmp:
-                tmp.write(img_icon_data)
-            self.after(100, lambda: [self.iconbitmap("temp_icon_opt.ico"), os.remove("temp_icon_opt.ico") if os.path.exists("temp_icon_opt.ico") else None])
-        except Exception:
-            pass
+        # CTkToplevel pone su ícono propio a los 200 ms: aplicamos el nuestro después
+        set_window_icon(self, delay_ms=250)
 
         style(self)
 
