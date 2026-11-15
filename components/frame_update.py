@@ -79,6 +79,7 @@ def load_frame_update(frame1, state: AppState, btn_play):
 
             txt_verifying_label = get_txt("verifying", "Verificando")
             txt_downloading_label = get_txt("downloading", "Descargando")
+            faltantes = []
 
             for i, item in enumerate(archivos):
                 path_local = item["path"]
@@ -108,11 +109,19 @@ def load_frame_update(frame1, state: AppState, btn_play):
                     file_url = CLIENT_URL + url_relativa
                     
                     r_file = requests.get(file_url, headers=headers, timeout=30)
+                    if r_file.status_code == 404:
+                        # Archivo listado en el manifest pero ausente en el servidor:
+                        # se saltea para no cortar toda la verificación.
+                        logger.warning(f"No existe en el servidor (404), se omite: {file_url}")
+                        faltantes.append(path_local)
+                        continue
                     r_file.raise_for_status()
-                    
+
                     with open(path_local_norm, "wb") as f:
                         f.write(r_file.content)
 
+            if faltantes:
+                logger.warning(f"{len(faltantes)} archivo(s) del manifest no están en el servidor: {faltantes}")
             update_ui_status(get_txt("client_updated", "¡Cliente actualizado! Ya podés jugar."), 1.0)
 
         except requests.exceptions.RequestException as e:

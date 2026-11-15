@@ -54,7 +54,8 @@ class ClientToolsApp(ctk.CTk):
 
     def _set_icon(self):
         try:
-            icon_path = Path.cwd() / "data" / "temp" / "client_tools_icon.ico"
+            from const.paths import TEMP_DIR
+            icon_path = TEMP_DIR / "client_tools_icon.ico"
             icon_path.parent.mkdir(parents=True, exist_ok=True)
             icon_path.write_bytes(base64.b64decode(ICONO_BASE64))
             self.iconbitmap(str(icon_path))
@@ -105,7 +106,7 @@ class ClientToolsApp(ctk.CTk):
             "Logs": ctk.BooleanVar(value=True),
             "ScreenShots": ctk.BooleanVar(value=True),
             "Temp": ctk.BooleanVar(value=True),
-            "Launcher": ctk.BooleanVar(value=True),
+            # "Launcher" NO: Data/Launcher (updater.exe, serverinfo/) se distribuye
             ".git": ctk.BooleanVar(value=True),
             "__pycache__": ctk.BooleanVar(value=True),
         }
@@ -114,6 +115,9 @@ class ClientToolsApp(ctk.CTk):
             "manifest.py": ctk.BooleanVar(value=True),
             "tool.py": ctk.BooleanVar(value=True),
             "tool.exe": ctk.BooleanVar(value=True),
+            "MuError.dmp": ctk.BooleanVar(value=True),
+            # Se actualiza por su propio flujo (API + updater), no por manifest
+            "launcher.exe": ctk.BooleanVar(value=True),
         }
 
         exclusions_frame = ctk.CTkFrame(tab, fg_color=SURFACE_COLOR, corner_radius=6)
@@ -271,8 +275,14 @@ class ClientToolsApp(ctk.CTk):
         for root, dirs, files in os.walk(client_dir):
             dirs[:] = [d for d in dirs if d.casefold() not in exclude_dirs]
             for f in files:
-                if f.casefold() not in exclude_files:
-                    all_files.append(os.path.join(root, f))
+                if f.casefold() in exclude_files:
+                    continue
+                if os.path.splitext(f)[1].casefold() in {".log", ".dmp"}:
+                    continue
+                # updater.exe en la raíz es la ubicación vieja (ahora va en Data/Launcher)
+                if os.path.samefile(root, client_dir) and f.casefold() == "updater.exe":
+                    continue
+                all_files.append(os.path.join(root, f))
 
         total_files = len(all_files)
         if total_files == 0:

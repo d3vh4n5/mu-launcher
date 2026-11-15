@@ -15,6 +15,7 @@ if str(BASE_DIR) not in sys.path:
 import customtkinter as ctk
 from assets.icono_data import ICONO_BASE64
 from const.colors import bg_color, primary_color
+from const.paths import TEMP_DIR, NEW_LAUNCHER_EXE
 import psutil
 
 class UpdaterGUI(ctk.CTk):
@@ -74,7 +75,7 @@ class UpdaterGUI(ctk.CTk):
 
     def _set_icon(self):
         try:
-            icon_path = BASE_DIR / "data" / "temp" / "updater_icon.ico"
+            icon_path = TEMP_DIR / "updater_icon.ico"
             icon_path.parent.mkdir(parents=True, exist_ok=True)
             icon_path.write_bytes(base64.b64decode(ICONO_BASE64))
             self.iconbitmap(str(icon_path))
@@ -145,7 +146,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    default_new = BASE_DIR / "data" / "launcher" / "launcher-new.exe"
+    default_new = NEW_LAUNCHER_EXE
     default_target = BASE_DIR / "launcher.exe"
 
     new_exe_arg = args.new_exe or str(default_new)

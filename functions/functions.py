@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import winreg
 import webbrowser
+import ctypes
 
 from const.config import *
 from const.texts import TEXTS
@@ -12,6 +13,18 @@ from utils.logger import logger
 # =========================
 # FUNCIONES
 # =========================
+
+# Handle del mutex que Main.dll busca al iniciar (CheckLauncher).
+# Se guarda a nivel módulo para que no se libere mientras el launcher esté abierto.
+_launcher_mutex = None
+
+def ensure_launcher_mutex():
+    global _launcher_mutex
+    if _launcher_mutex:
+        return
+    _launcher_mutex = ctypes.windll.kernel32.CreateMutexW(None, False, LAUNCHER_MUTEX)
+    if not _launcher_mutex:
+        raise OSError(f"No se pudo crear el mutex del launcher (error {ctypes.GetLastError()})")
 
 def get_registry_value(clave):
     route = r"Software\Webzen\MU\config"
@@ -72,6 +85,7 @@ def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_pl
                 f"No se encontró main.exe en:\n{MU_PATH}"
             )
             return
+        ensure_launcher_mutex()
         subprocess.Popen(str(MAIN_EXE), cwd=str(MU_PATH))
         logger.info("Juego iniciado correctamente (main.exe lanzado).")
 

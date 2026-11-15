@@ -3,10 +3,10 @@ import sys
 import logging
 import threading
 
-# Directorio de logs
-LOGS_DIR = os.path.join(os.getcwd(), "logs")
-if not os.path.exists(LOGS_DIR):
-    os.makedirs(LOGS_DIR, exist_ok=True)
+from const.paths import LOGS_DIR, ensure_runtime_dirs
+
+# Directorio de logs: %LOCALAPPDATA%/MuCampana/logs
+ensure_runtime_dirs()
 
 LOG_FILE = os.path.join(LOGS_DIR, "launcher.log")
 

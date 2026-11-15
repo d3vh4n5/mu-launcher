@@ -22,7 +22,8 @@ def trigger_launcher_update(new_exe_path, target_exe_path=None, updater_exe_path
     target_exe_str = str(target_exe_path)
 
     if getattr(sys, 'frozen', False):
-        updater_exe = Path(updater_exe_path) if updater_exe_path else base_dir / "updater.exe"
+        from const.paths import UPDATER_EXE
+        updater_exe = Path(updater_exe_path) if updater_exe_path else UPDATER_EXE
         logger.info(f"Preparando ejecución del updater: ruta={updater_exe.resolve()}, existe={updater_exe.exists()}")
         if updater_exe.exists():
             cmd = [str(updater_exe), "--new-exe", new_exe_str, "--target-exe", target_exe_str, "--pid", str(pid)]

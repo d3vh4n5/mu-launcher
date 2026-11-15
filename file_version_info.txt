@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 0, 0, 0),
-    prodvers=(1, 0, 0, 0),
+    filevers=(1, 2, 7, 0),
+    prodvers=(1, 2, 7, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x40004,
@@ -15,12 +15,12 @@ VSVersionInfo(
         u'040a04b0',
         [StringStruct(u'CompanyName', u'Hanster'),
         StringStruct(u'FileDescription', u'Mu Launcher'),
-        StringStruct(u'FileVersion', u'1.0.2'),
+        StringStruct(u'FileVersion', u'1.2.7'),
         StringStruct(u'InternalName', u'launcher'),
         StringStruct(u'LegalCopyright', u'© 2026 Hanster'),
         StringStruct(u'OriginalFilename', u'launcher.exe'),
         StringStruct(u'ProductName', u'Mu Launcher'),
-        StringStruct(u'ProductVersion', u'1.0.2')])
+        StringStruct(u'ProductVersion', u'1.2.7')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [1034, 1200])])
   ]

@@ -1,9 +1,46 @@
 import sys
+import shutil
 import requests
 from pathlib import Path
 
 from const.config import API_URL, API_KEY, BASE_DIR, VERSION
+from const.paths import (
+    TEMP_DIR, NEW_LAUNCHER_EXE, UPDATER_EXE,
+    LEGACY_TEMP_DIR, LEGACY_UPDATER_EXE, ensure_runtime_dirs,
+)
 from utils.logger import logger
+
+
+def cleanup_runtime_files():
+    """
+    Borra restos de actualizaciones anteriores y migra desde las ubicaciones viejas
+    (Data/temp y updater.exe en la raíz del cliente). Nunca debe cortar el inicio.
+    """
+    try:
+        if NEW_LAUNCHER_EXE.exists():
+            NEW_LAUNCHER_EXE.unlink()
+            logger.info(f"Borrado launcher temporal de una actualización anterior: {NEW_LAUNCHER_EXE}")
+    except Exception as e:
+        logger.warning(f"No se pudo borrar {NEW_LAUNCHER_EXE}: {e}")
+
+    try:
+        if LEGACY_TEMP_DIR.exists():
+            shutil.rmtree(LEGACY_TEMP_DIR)
+            logger.info(f"Borrada carpeta temporal vieja: {LEGACY_TEMP_DIR}")
+    except Exception as e:
+        logger.warning(f"No se pudo borrar {LEGACY_TEMP_DIR}: {e}")
+
+    try:
+        if LEGACY_UPDATER_EXE.exists():
+            if UPDATER_EXE.exists():
+                LEGACY_UPDATER_EXE.unlink()
+                logger.info(f"Borrado updater viejo de la raíz: {LEGACY_UPDATER_EXE}")
+            else:
+                UPDATER_EXE.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(LEGACY_UPDATER_EXE), str(UPDATER_EXE))
+                logger.info(f"Updater movido a {UPDATER_EXE}")
+    except Exception as e:
+        logger.warning(f"No se pudo migrar {LEGACY_UPDATER_EXE}: {e}")
 
 def _extract_url(value):
     if not isinstance(value, str):
@@ -33,12 +70,13 @@ def _download_file(url, destination, headers, progress_callback=None, message="D
 def check_and_update_launcher(progress_callback=None):
     """
     Verifica al inicio de la aplicación si existe una versión más reciente del launcher en el servidor.
-    Si existe, la descarga a data/temp/new_launcher.exe e invoca al updater.
+    Si existe, la descarga a %LOCALAPPDATA%/MuCampana/temp/new_launcher.exe e invoca al updater.
     """
     headers = {
         "x-api-key": API_KEY
     }
     launcher_url = f"{API_URL}/api/v2/launcher"
+    cleanup_runtime_files()
     try:
         logger.info(f"Iniciando chequeo del launcher: url={launcher_url}, version={VERSION}")
         logger.info(f"Directorio base: {BASE_DIR.resolve()}")
@@ -92,9 +130,8 @@ def check_and_update_launcher(progress_callback=None):
             progress_callback("Descargando actualización", None)
         if not getattr(sys, "frozen", False):
             print(f"[launcher] Descargando actualización desde: {file_url}")
-        temp_dir = BASE_DIR / "data" / "temp"
-        temp_dir.mkdir(parents=True, exist_ok=True)
-        new_launcher_path = temp_dir / "new_launcher.exe"
+        ensure_runtime_dirs()
+        new_launcher_path = NEW_LAUNCHER_EXE
         logger.info(f"Destino temporal del launcher: {new_launcher_path.resolve()}")
 
         _download_file(
@@ -105,7 +142,8 @@ def check_and_update_launcher(progress_callback=None):
             "Descargando actualización",
         )
 
-        updater_path = BASE_DIR / "updater.exe"
+        updater_path = UPDATER_EXE
+        updater_path.parent.mkdir(parents=True, exist_ok=True)
         updater_exists = updater_path.exists()
         logger.info(
             f"Comprobando updater: ruta={updater_path.resolve()}, existe={updater_exists}, "

@@ -41,8 +41,10 @@ def update_executable(old_path, new_path):
                     raise e
                 time.sleep(0.5)
 
-        # Mover el nuevo al lugar del original
-        new_path.rename(old_path)
+        # Mover el nuevo al lugar del original. shutil.move y no rename():
+        # el temp está en %LOCALAPPDATA% (C:) y el cliente puede estar en otro disco.
+        import shutil
+        shutil.move(str(new_path), str(old_path))
 
         # Limpiar backup de forma silenciosa si existe
         if temp_old.exists():

@@ -6,3 +6,5 @@ __pycache__
 *.sse
 .env
 logs/*.log
+# Salida del generador de manifest (se sube al VPS, no al repo)
+client-tools/client-files-manifest/manifest.json
