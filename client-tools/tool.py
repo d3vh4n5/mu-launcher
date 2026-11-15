@@ -12,6 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+import utils.wmi_guard  # noqa: F401  (debe ir antes de customtkinter)
 import customtkinter as ctk
 
 from assets.icono_data import ICONO_BASE64

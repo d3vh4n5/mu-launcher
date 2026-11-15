@@ -1,3 +1,4 @@
+import utils.wmi_guard  # noqa: F401  (debe ir antes de customtkinter)
 from tkinter import messagebox
 
 from views.app import App

@@ -12,6 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
+import utils.wmi_guard  # noqa: F401  (debe ir antes de customtkinter)
 import customtkinter as ctk
 from assets.icono_data import ICONO_BASE64
 from const.colors import bg_color, primary_color
