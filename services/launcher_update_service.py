@@ -1,5 +1,6 @@
 import sys
 import shutil
+import hashlib
 import requests
 from pathlib import Path
 
@@ -49,23 +50,58 @@ def _extract_url(value):
         value = value[value.find("](") + 2:-1]
     return value if value.startswith(("http://", "https://")) else None
 
-def _download_file(url, destination, headers, progress_callback=None, message="Descargando"):
-    logger.info(f"Iniciando descarga: url={url}, destino={Path(destination).resolve()}")
+def _sha256_of(path):
+    sha = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            sha.update(block)
+    return sha.hexdigest()
+
+
+def _download_file(url, destination, headers, progress_callback=None, message="Descargando",
+                   expected_sha256=None):
+    """
+    Descarga a un .part y solo lo deja en `destination` si el sha256 coincide con
+    el que informó la API. Si no coincide (descarga cortada, archivo corrupto o
+    alterado) se borra y se lanza ValueError: nunca se instala un exe a medias.
+    """
+    destination = Path(destination)
+    part_path = destination.with_name(destination.name + ".part")
+    logger.info(f"Iniciando descarga: url={url}, destino={destination.resolve()}")
     response = requests.get(url, headers=headers, stream=True, timeout=30)
     response.raise_for_status()
     total_bytes = int(response.headers.get("content-length", 0))
     downloaded_bytes = 0
+    sha = hashlib.sha256()
     logger.info(f"Descarga aceptada: status={response.status_code}, bytes esperados={total_bytes or 'desconocidos'}")
 
-    with open(destination, "wb") as output_file:
-        for chunk in response.iter_content(chunk_size=64 * 1024):
-            if not chunk:
-                continue
-            output_file.write(chunk)
-            downloaded_bytes += len(chunk)
-            if progress_callback and total_bytes:
-                progress_callback(message, min(downloaded_bytes / total_bytes, 1.0))
-    logger.info(f"Descarga finalizada: destino={Path(destination).resolve()}, bytes={downloaded_bytes}")
+    try:
+        with open(part_path, "wb") as output_file:
+            for chunk in response.iter_content(chunk_size=64 * 1024):
+                if not chunk:
+                    continue
+                output_file.write(chunk)
+                sha.update(chunk)
+                downloaded_bytes += len(chunk)
+                if progress_callback and total_bytes:
+                    progress_callback(message, min(downloaded_bytes / total_bytes, 1.0))
+
+        actual_sha256 = sha.hexdigest()
+        if expected_sha256:
+            if actual_sha256.lower() != expected_sha256.lower():
+                raise ValueError(
+                    f"El archivo descargado no es válido (sha256 {actual_sha256}, "
+                    f"esperado {expected_sha256}, bytes={downloaded_bytes})"
+                )
+            logger.info(f"sha256 verificado: {actual_sha256}")
+        else:
+            logger.warning(f"La API no informó sha256 para {url}; se instala sin verificar")
+
+        part_path.replace(destination)
+    finally:
+        if part_path.exists():
+            part_path.unlink()
+    logger.info(f"Descarga finalizada: destino={destination.resolve()}, bytes={downloaded_bytes}")
 
 def check_and_update_launcher(progress_callback=None):
     """
@@ -140,10 +176,16 @@ def check_and_update_launcher(progress_callback=None):
             headers,
             progress_callback,
             "Descargando actualización",
+            expected_sha256=launcher_info.get("launcherSha256"),
         )
 
         updater_path = UPDATER_EXE
         updater_path.parent.mkdir(parents=True, exist_ok=True)
+        updater_sha256 = launcher_info.get("updaterSha256")
+        # Si el updater local no coincide con el publicado (viejo o corrupto), se vuelve a bajar
+        if updater_path.exists() and updater_sha256 and _sha256_of(updater_path) != updater_sha256.lower():
+            logger.info("updater.exe local distinto del publicado; se descargará de nuevo.")
+            updater_path.unlink()
         updater_exists = updater_path.exists()
         logger.info(
             f"Comprobando updater: ruta={updater_path.resolve()}, existe={updater_exists}, "
@@ -159,7 +201,8 @@ def check_and_update_launcher(progress_callback=None):
                 progress_callback("Descargando actualizador", None)
             if not getattr(sys, "frozen", False):
                 print(f"[launcher] Descargando updater desde: {updater_url}")
-            _download_file(updater_url, updater_path, headers, progress_callback, "Descargando actualizador")
+            _download_file(updater_url, updater_path, headers, progress_callback, "Descargando actualizador",
+                           expected_sha256=updater_sha256)
             logger.info(f"Verificación posterior del updater: existe={updater_path.exists()}, ruta={updater_path.resolve()}")
             if not getattr(sys, "frozen", False):
                 print(f"[launcher] Updater descargado: {updater_path}")
