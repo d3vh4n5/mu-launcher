@@ -12,7 +12,7 @@ else:
 load_dotenv(dotenv_path=env_file)
 
 PROJECT_NAME="Mu Campana"
-VERSION="1.2.7"
+VERSION="1.2.8"
 REGISTER_URL= "https://mu-front.vercel.app/register"
 MU_SERVER_URL= os.getenv("MU_SERVER_URL")
 API_URL= os.getenv("API_URL")
