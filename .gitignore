@@ -1,7 +1,7 @@
 dist
 build
 .venv
-*.spec
+# *.spec  (los .spec son parte del build: van al repo)
 __pycache__
 *.sse
 .env
