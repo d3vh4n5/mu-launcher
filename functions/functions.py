@@ -62,6 +62,7 @@ def set_reg_dword(var_name, var_value, reg_type = "REG_DWORD"):
 
 
 def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_play, root):
+    """Devuelve True si main.exe se lanzó."""
     txt_launching = TEXTS.get(lang, TEXTS["Spn"]).get("launching", "Lanzando...")
     btn_play.configure(state="disabled", text=txt_launching) # Evitar múltiples clicks
     root.update()
@@ -84,16 +85,17 @@ def launch_game(server, windowed, resolution, audio, music, volume, lang, btn_pl
                 "Error",
                 f"No se encontró main.exe en:\n{MU_PATH}"
             )
-            return
+            return False
         ensure_launcher_mutex()
         subprocess.Popen(str(MAIN_EXE), cwd=str(MU_PATH))
         logger.info("Juego iniciado correctamente (main.exe lanzado).")
+        return True
 
     except Exception as e:
         logger.error(f"No se pudo ejecutar el juego: {e}", exc_info=True)
         messagebox.showerror("Error", f"No se pudo ejecutar el juego\n{e}")
 
-        return
+        return False
     finally:
         root.after(2000, lambda: btn_play.configure(state="normal", text=TEXTS[lang]["play"]))
 

@@ -2,6 +2,7 @@ from tkinter import BooleanVar, IntVar, StringVar
 
 from const.config import RESOLUTION_MAP
 from functions.functions import get_registry_value, set_reg_dword
+from utils.launcher_settings import get_close_action, set_close_action
 
 mapa_invertido = {v: k for k, v in RESOLUTION_MAP.items()}
 
@@ -20,7 +21,12 @@ class AppState:
         self.lang = StringVar(
             value=val_reg if val_reg in ["Spn", "Eng", "Por"] else "Eng"
         )
-    
+        # Qué hace la X de la ventana: "tray" (bandeja) o "exit" (cerrar)
+        self.close_action = StringVar(value=get_close_action())
+
+    def save_close_action(self):
+        set_close_action(self.close_action.get())
+
     def set_lang(self, lang: StringVar):
         print('Setting lang; ', lang.get())
         self.lang = lang
@@ -60,3 +66,4 @@ class AppState:
         self.save_music()
         self.save_volume()
         self.save_lang()
+        self.save_close_action()

@@ -4,6 +4,7 @@ import customtkinter as ctk
 from components.frame_lang import load_frame_lang
 from components.frame_window import load_frame_window
 from components.frame_audio import load_frame_audio
+from components.frame_close import load_frame_close
 import pywinstyles
 from utils.window_icon import set_window_icon
 from utils.state import AppState
@@ -26,7 +27,7 @@ class Options(ctk.CTkToplevel):
         self.title(txt_options)
         x = self.winfo_screenmmwidth() *  2
         y = int(self.winfo_screenheight() * 0.3)
-        self.geometry(f"{app_width}x500+"+ str(x) + '+' + str(y))
+        self.geometry(f"{app_width}x600+"+ str(x) + '+' + str(y))
         self.resizable(False, False)
         self.configure(fg_color=bg_color)
         self.attributes("-alpha", 0.95)
@@ -54,13 +55,15 @@ class Options(ctk.CTkToplevel):
         frame_window = Frame(self, width=app_width, bg=bg_color)
         frame_audio = Frame(self, width=app_width, bg="#0A0A0A", pady=10)
         frame_idioma = Frame(self, bg=bg_color)
+        frame_close = Frame(self, bg=bg_color)
 
-        for frame in [frame_window, frame_audio, frame_idioma]:
+        for frame in [frame_window, frame_audio, frame_idioma, frame_close]:
             frame.pack(fill="x", pady=10)
 
         load_frame_window(frame_window, app_state)
         load_frame_audio(frame_audio, app_state)
         load_frame_lang(frame_idioma, app_state)
+        load_frame_close(frame_close, app_state)
 
         self.btn_save = ctk.CTkButton(
             self,

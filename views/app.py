@@ -20,6 +20,9 @@ from const.colors import bg_color, primary_color
 from const.config import app_width,app_heigh, VERSION, components_width, REGISTER_URL
 from const.texts import TEXTS
 from views.options_window import Options
+from utils.tray import TrayIcon
+from utils.process import listen_for_show_requests
+from utils.launcher_settings import CLOSE_TO_TRAY, tray_hint_shown, set_tray_hint_shown
 
 class App():
     def __init__(self, register_url=None):
@@ -86,18 +89,24 @@ class App():
             state="normal" if state.can_launch == False else "normal", # Lo habilitaremos una vez cargados los servidores
         )
 
-        btn_play.configure(command=lambda: launch_game(
-            # server_var.get(),
-            "Online",
-            state.window_mode.get(),
-            state.resolution.get(),
-            state.audio.get(),
-            state.music.get(),
-            state.volume.get(),
-            state.lang.get(),
-            btn_play,
-            root
-        ),)
+        def play():
+            launched = launch_game(
+                # server_var.get(),
+                "Online",
+                state.window_mode.get(),
+                state.resolution.get(),
+                state.audio.get(),
+                state.music.get(),
+                state.volume.get(),
+                state.lang.get(),
+                btn_play,
+                root
+            )
+            # Como Steam/Battle.net: con el juego abierto, el launcher se va a la bandeja
+            if launched and state.close_action.get() == CLOSE_TO_TRAY:
+                root.after(1000, hide_to_tray)
+
+        btn_play.configure(command=play)
         btn_play.place(x=0, y=0)
 
         # --- BOTÓN CONFIG (Lado Derecho) ---
@@ -168,6 +177,33 @@ class App():
 
         state.lang.trace_add("write", update_app_texts)
 
+        # -------- BANDEJA DEL SISTEMA ----------------
+        def get_txt(key, fallback=""):
+            return TEXTS.get(state.lang.get(), TEXTS["Spn"]).get(key, fallback)
+
+        tray = TrayIcon(root, PROJECT_NAME, state.lang.get(), on_play=lambda: btn_play.invoke())
+        # El menú de la bandeja corre en otro hilo: recibe el idioma como texto, no el StringVar
+        state.lang.trace_add("write", lambda *args: tray.set_lang(state.lang.get()))
+
+        def hide_to_tray():
+            tray.hide()
+            if tray.available and not tray_hint_shown():
+                tray.notify(get_txt("tray_hint"), PROJECT_NAME)
+                set_tray_hint_shown()
+
+        def on_close():
+            if state.close_action.get() == CLOSE_TO_TRAY and tray.available:
+                hide_to_tray()
+            else:
+                tray.quit()
+
+        root.protocol("WM_DELETE_WINDOW", on_close)
+        # Si se abre launcher.exe otra vez, esta instancia muestra su ventana
+        listen_for_show_requests(lambda: tray.post(tray.show))
+
         pywinstyles.change_header_color(root, "#000000")
-        root.mainloop()
+        try:
+            root.mainloop()
+        finally:
+            tray.stop()
 

@@ -19,7 +19,13 @@ TEXTS = {
         "connection_error": "Error de conexión con el servidor",
         "error": "Error",
         "save": "Guardar",
-        "options_title": "Opciones"
+        "options_title": "Opciones",
+        "close_behavior": "Al cerrar la ventana",
+        "close_to_tray": "Minimizar a la bandeja",
+        "close_exit": "Cerrar el launcher",
+        "tray_open": "Abrir launcher",
+        "tray_exit": "Salir",
+        "tray_hint": "El launcher sigue abierto acá. Clic derecho en el ícono para salir."
     },
     "Eng": {
         "resolution": "Resolution",
@@ -41,7 +47,13 @@ TEXTS = {
         "connection_error": "Server connection error",
         "error": "Error",
         "save": "Save",
-        "options_title": "Options"
+        "options_title": "Options",
+        "close_behavior": "When closing the window",
+        "close_to_tray": "Minimize to tray",
+        "close_exit": "Exit the launcher",
+        "tray_open": "Open launcher",
+        "tray_exit": "Exit",
+        "tray_hint": "The launcher is still running here. Right-click the icon to exit."
     },
     "Por": {
         "volume": "Volume",
@@ -63,6 +75,12 @@ TEXTS = {
         "connection_error": "Erro de conexão com o servidor",
         "error": "Erro",
         "save": "Salvar",
-        "options_title": "Opções"
+        "options_title": "Opções",
+        "close_behavior": "Ao fechar a janela",
+        "close_to_tray": "Minimizar para a bandeja",
+        "close_exit": "Fechar o launcher",
+        "tray_open": "Abrir launcher",
+        "tray_exit": "Sair",
+        "tray_hint": "O launcher continua aberto aqui. Clique com o botão direito no ícone para sair."
     }
 }
