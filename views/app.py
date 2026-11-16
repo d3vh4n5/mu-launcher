@@ -6,6 +6,7 @@ from components.frame_update import load_frame_update
 from components.frame_window import load_frame_window
 from components.frame_audio import load_frame_audio
 from components.frame_server import load_frame_server
+from components.frame_news import load_frame_news
 from const.config import PROJECT_NAME
 import base64
 import os
@@ -23,6 +24,15 @@ from views.options_window import Options
 from utils.tray import TrayIcon
 from utils.process import listen_for_show_requests
 from utils.launcher_settings import CLOSE_TO_TRAY, tray_hint_shown, set_tray_hint_shown
+from utils.periodic import run_periodically
+from utils.process import process_exists
+from utils.logger import logger
+from services.launcher_update_service import fetch_launcher_info, check_and_update_launcher
+from updater import trigger_launcher_update
+from const.config import UPDATE_CHECK_MS
+from tkinter import messagebox
+from pathlib import Path
+import threading
 
 class App():
     def __init__(self, register_url=None):
@@ -67,7 +77,7 @@ class App():
             font=("Arial", 14, "bold"),
             bg=bg_color,
             fg="white",
-        ).pack(pady=10)
+        ).pack(pady=(8, 10))
 
         # xxxxxxxxxxxxxxxxx
         # Botón jugar
@@ -129,28 +139,19 @@ class App():
         btn_cfg.place(x=-15, y=0) 
 
         # -------- FRAMES -----------------------------
-        frame_window= Frame(root, width=app_width, bg=bg_color)
-        frame_audio = Frame(root, width=app_width, bg="#0A0A0A", pady=10)
-        frame_idioma = Frame(root, bg=bg_color)
+        # Resolución, audio e idioma están en Options: acá van las noticias
+        frame_news = Frame(root, bg=bg_color)
         frame_server = Frame(root, bg=bg_color)
         frame_update = Frame(root, bg=bg_color)
 
-        frames = []
-        frames.append(frame_window)
-        frames.append(frame_audio)
-        frames.append(frame_idioma)
-        frames.append(frame_server)
-        frames.append(frame_update)
+        frame_news.pack(fill="x", pady=(0, 12))
+        frame_server.pack(fill="x", pady=(0, 6))
+        frame_update.pack(fill="x", pady=(0, 8))
 
-        for frame in frames:
-            frame.pack(fill="x", pady=10)
-
-
-        #load_frame_window(frame_window, state)
-        #load_frame_audio(frame_audio, state)
-        #load_frame_lang(frame_idioma, state)
+        load_frame_news(frame_news, state)
         load_frame_server(frame_server, state, btn_play)
-        load_frame_update(frame_update, state, btn_play)
+        load_frame_update(frame_update, state, btn_play,
+                          on_client_update=lambda: notify_if_hidden(get_txt("client_update_notify")))
 
         #Aqc'a cargo el btn a la GUI
         btn_container.pack()
@@ -165,15 +166,83 @@ class App():
         )
 
         version = Label(root, text=f"{TEXTS.get(state.lang.get(), TEXTS['Spn'])['version']}: {VERSION}", fg="white", font=("Courier New", 8))
-        version.config(bg=bg_color, fg="#adadad", pady=10)
-        version.pack(pady=(10, 0))
+        version.config(bg=bg_color, fg="#adadad", pady=2)
+        # Pegada al borde inferior de la ventana
+        version.pack(side="bottom", pady=(0, 4))
+
+        # -------- NUEVA VERSIÓN DEL LAUNCHER ----------
+        # Al iniciar ya se actualiza solo. Si sale una versión con el launcher abierto,
+        # no se reinicia por su cuenta (podría estar jugando): la versión pasa a ser
+        # un enlace "Actualizar a X" y, si está en la bandeja, se avisa con una notificación.
+        launcher_update = {"version": None, "notified": None, "applying": False}
+
+        def refresh_version_label(*args):
+            txts = TEXTS.get(state.lang.get(), TEXTS["Spn"])
+            text = f"{txts.get('version', 'Versión')}: {VERSION}"
+            if launcher_update["applying"]:
+                version.config(text=txts.get("launcher_updating", "Actualizando launcher..."),
+                               fg="#adadad", cursor="")
+            elif launcher_update["version"]:
+                version.config(text=f"{text}  ·  {txts.get('launcher_update_link', 'Actualizar a')} "
+                                    f"{launcher_update['version']}",
+                               fg="dodger blue", cursor="hand2")
+            else:
+                version.config(text=text, fg="#adadad", cursor="")
+
+        def on_launcher_info(info):
+            if not info:
+                return  # sin conexión: se reintenta en el próximo chequeo
+            new_version = str(info.get("version") or "") if info.get("needUpdate") else None
+            if new_version != launcher_update["version"]:
+                launcher_update["version"] = new_version
+                refresh_version_label()
+            if new_version and launcher_update["notified"] != new_version:
+                launcher_update["notified"] = new_version
+                logger.info(f"Nueva versión del launcher disponible: {new_version}")
+                notify_if_hidden(get_txt("launcher_update_notify").format(version=new_version))
+
+        def apply_launcher_update(event=None):
+            if not launcher_update["version"] or launcher_update["applying"]:
+                return
+            # El juego depende del mutex del launcher: no se reemplaza con el juego abierto
+            if process_exists("main.exe"):
+                messagebox.showinfo(PROJECT_NAME, get_txt("close_game_first"), parent=root)
+                return
+            launcher_update["applying"] = True
+            refresh_version_label()
+
+            def worker():
+                info = check_and_update_launcher()
+                try:
+                    root.after(0, finish_launcher_update, info)
+                except Exception:
+                    pass
+
+            threading.Thread(target=worker, daemon=True, name="launcher-update").start()
+
+        def finish_launcher_update(info):
+            new_path = info.get("_new_launcher_path") if info else None
+            if not new_path:
+                launcher_update["applying"] = False
+                refresh_version_label()
+                messagebox.showerror(PROJECT_NAME, get_txt("launcher_update_error"), parent=root)
+                return
+            tray.stop()
+            # Lanza el updater y termina este proceso (sys.exit sale del mainloop)
+            trigger_launcher_update(
+                Path(new_path),
+                Path(info["_current_exe"]),
+                Path(info["_updater_path"]) if info.get("_updater_path") else None,
+            )
+
+        version.bind("<Button-1>", apply_launcher_update)
 
         def update_app_texts(*args):
             lang = state.lang.get()
             txts = TEXTS.get(lang, TEXTS["Spn"])
             btn_play.configure(text=f"{txts.get('play', 'JUGAR')}     ")
             label.config(text=txts.get("register", "Registrarse"))
-            version.config(text=f"{txts.get('version', 'Versión')}: {VERSION}")
+            refresh_version_label()
 
         state.lang.trace_add("write", update_app_texts)
 
@@ -190,6 +259,14 @@ class App():
             if tray.available and not tray_hint_shown():
                 tray.notify(get_txt("tray_hint"), PROJECT_NAME)
                 set_tray_hint_shown()
+
+        def notify_if_hidden(message):
+            # Con la ventana visible alcanza con el aviso en pantalla
+            if tray.available and root.state() in ("withdrawn", "iconic"):
+                tray.notify(message, PROJECT_NAME)
+
+        run_periodically(root, UPDATE_CHECK_MS, fetch_launcher_info, on_launcher_info,
+                         name="launcher-update-check")
 
         def on_close():
             if state.close_action.get() == CLOSE_TO_TRAY and tray.available:

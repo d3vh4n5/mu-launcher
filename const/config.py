@@ -21,6 +21,10 @@ API_KEY = os.getenv("API_KEY") #Campiar por la api key al momento de compilar
 # Debe coincidir con LauncherMutex de MainInfo.ini (máx. 31 caracteres).
 # Con LauncherStart = 1, Main.dll cierra main.exe si este mutex no existe.
 LAUNCHER_MUTEX = "MuCampanaLauncherMtx"
+
+# Con el launcher abierto (por ejemplo varios días en la bandeja) se vuelve a consultar
+NEWS_REFRESH_MS = 10 * 60 * 1000     # noticias
+UPDATE_CHECK_MS = 30 * 60 * 1000     # nueva versión del launcher y del cliente
 # =========================
 # CONFIGURACIÓN
 # =========================

@@ -48,3 +48,14 @@ def tray_hint_shown():
 
 def set_tray_hint_shown():
     _set("TrayHintShown", 1, winreg.REG_DWORD)
+
+
+# sha256 del manifest con el que se verificó el cliente por última vez. Si el
+# manifest publicado cambia, hay una actualización del cliente pendiente.
+def get_verified_manifest_hash():
+    return _get("VerifiedManifestSha256")
+
+
+def set_verified_manifest_hash(value):
+    if value:
+        _set("VerifiedManifestSha256", value)

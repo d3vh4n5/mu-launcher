@@ -24,6 +24,26 @@ class ServerService:
             logger.error(f"Error al obtener servidores: {e}", exc_info=True)
             return []
     
+    def fetch_news(self):
+        """
+        Últimas noticias resumidas: {"newsUrl": str|None, "items": [{id, title,
+        category, pinned, publishedAt, url}]}. Devuelve None si la API no respondió.
+        """
+        try:
+            response = requests.get(
+                f"{API_URL}/api/v2/launcher/news",
+                headers=self.headers,
+                timeout=8
+            )
+            response.raise_for_status()
+            data = response.json()
+            if not isinstance(data, dict) or not isinstance(data.get("items"), list):
+                raise ValueError("Respuesta de noticias inválida")
+            return data
+        except Exception as e:
+            logger.error(f"Error al obtener noticias: {e}")
+            return None
+
     def download_and_replace_config(self, base_url, file_path_api, local_filename="ServerInfo.sse"):
         """
         Descarga el archivo desde la API y pisa el archivo local.

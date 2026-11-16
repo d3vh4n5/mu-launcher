@@ -103,6 +103,26 @@ def _download_file(url, destination, headers, progress_callback=None, message="D
             part_path.unlink()
     logger.info(f"Descarga finalizada: destino={destination.resolve()}, bytes={downloaded_bytes}")
 
+def fetch_launcher_info():
+    """
+    Solo consulta si hay una versión nueva del launcher, sin descargar nada.
+    Devuelve el payload de la API ({needUpdate, version, ...}) o None si falló.
+    """
+    try:
+        response = requests.get(
+            f"{API_URL}/api/v2/launcher",
+            params={"version": VERSION},
+            headers={"x-api-key": API_KEY},
+            timeout=10,
+        )
+        response.raise_for_status()
+        info = response.json()
+        return info if isinstance(info, dict) else None
+    except Exception as e:
+        logger.warning(f"No se pudo consultar la versión del launcher: {e}")
+        return None
+
+
 def check_and_update_launcher(progress_callback=None):
     """
     Verifica al inicio de la aplicación si existe una versión más reciente del launcher en el servidor.
