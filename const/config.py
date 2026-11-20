@@ -12,10 +12,10 @@ else:
 load_dotenv(dotenv_path=env_file)
 
 PROJECT_NAME="Mu Campana"
-VERSION="1.2.9"
-REGISTER_URL= "https://mu-front.vercel.app/register"
-MU_SERVER_URL= os.getenv("MU_SERVER_URL")
-API_URL= os.getenv("API_URL")
+VERSION="1.3.0"
+REGISTER_URL= "https://mucampana.com/register"
+MU_SERVER_URL= "https://api.mucampana.com"
+API_URL= "https://api.mucampana.com"
 API_KEY = os.getenv("API_KEY") #Campiar por la api key al momento de compilar
 
 # Debe coincidir con LauncherMutex de MainInfo.ini (máx. 31 caracteres).
